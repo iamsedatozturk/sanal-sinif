@@ -501,7 +501,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
     e.preventDefault();
     setDragOver(false);
     
-    if (!currentUser.role === 'teacher' || !handleUploadDocument) return;
+    if (currentUser.role !== 'teacher' || !handleUploadDocument) return;
     
     const files = Array.from(e.dataTransfer.files);
     files.forEach(file => handleUploadDocument(file));
@@ -1354,8 +1354,8 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                   isTeacher={currentUser.role === 'teacher'}
                   isAudioEnabled={isAudioEnabled}
                   isVideoEnabled={isVideoEnabled}
-                  onToggleAudio={currentUser.role === 'observer' ? undefined : handleToggleAudio}
-                  onToggleVideo={currentUser.role === 'observer' ? undefined : handleToggleVideo}
+                  onToggleAudio={currentUser.role === 'observer' ? () => { } : handleToggleAudio}
+                  onToggleVideo={currentUser.role === 'observer' ? () => { } : handleToggleVideo}
                   onLeaveCall={handleLeaveCall}
                   onMuteParticipant={handleMuteParticipant}
                   layout={currentLayout}

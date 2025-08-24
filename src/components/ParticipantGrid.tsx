@@ -89,21 +89,50 @@ export const ParticipantGrid: React.FC<ParticipantGridProps> = ({
       return 'gap-1 sm:gap-2';
     };
 
-    // Tüm layout'larda tam yükseklik için h-screen kullan
+    // Mobilde: En üstte öğretmen, altında katılımcılar 2'li grid ve dikey scroll
+    const mainParticipant = allParticipants[0];
+    const otherParticipants = allParticipants.slice(1);
     return (
-      <div className="h-full flex items-center justify-center overflow-hidden">
-        <div className={`w-full h-full flex flex-col justify-center ${getPadding(allParticipants.length)}`}>
-          <div className={`h-full grid ${getGridClass(allParticipants.length)} ${getGridRows(allParticipants.length)} ${getGap(allParticipants.length)} place-items-stretch`}>
-            {allParticipants.map((participant) => (
-              <div key={participant.id} className="w-full h-full max-h-full flex items-stretch justify-stretch min-h-0">
-                <div className="w-full h-full rounded-lg sm:rounded-xl overflow-hidden flex">
-                  {renderParticipant(participant, false)}
+      <>
+        {/* Mobil özel layout */}
+        <div className="sm:hidden w-full h-full flex flex-col items-center overflow-hidden p-2">
+          {/* Ana katılımcı */}
+          <div className="w-full max-w-md mx-auto flex-none flex items-center justify-center mb-2">
+            <div className="w-full aspect-video max-h-[40vh] rounded-xl overflow-hidden flex bg-white/10 shadow-md border border-white/10">
+              {renderParticipant(mainParticipant, true)}
+            </div>
+          </div>
+          {/* Diğer katılımcılar 2'li grid ve dikey scroll */}
+          {otherParticipants.length > 0 && (
+            <div className="w-full max-w-md mx-auto flex-1 overflow-y-auto grid grid-cols-1 gap-2 pb-2 min-h-0" style={{maxHeight:'55vh'}}>
+              {Array.from({length: Math.ceil(otherParticipants.length/2)}).map((_, rowIdx) => (
+                <div key={rowIdx} className="flex gap-2">
+                  {otherParticipants.slice(rowIdx*2, rowIdx*2+2).map((participant) => (
+                    <div key={participant.id} className="flex-1 aspect-video rounded-lg overflow-hidden flex bg-white/10 shadow border border-white/10">
+                      {renderParticipant(participant, false, true)}
+                    </div>
+                  ))}
+                  {otherParticipants.length % 2 === 1 && rowIdx === Math.floor(otherParticipants.length/2) ? <div className="flex-1" /> : null}
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          )}
+        </div>
+        {/* Masaüstü ve tablet için eski grid layout */}
+        <div className="hidden sm:flex h-full items-center justify-center overflow-hidden">
+          <div className={`w-full h-full flex flex-col justify-center ${getPadding(allParticipants.length)}`}> 
+            <div className={`h-full grid ${getGridClass(allParticipants.length)} ${getGridRows(allParticipants.length)} ${getGap(allParticipants.length)} place-items-stretch`}>
+              {allParticipants.map((participant) => (
+                <div key={participant.id} className="w-full h-full max-h-full flex items-stretch justify-stretch min-h-0">
+                  <div className="w-full h-full rounded-lg sm:rounded-xl overflow-hidden flex">
+                    {renderParticipant(participant, false)}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   };
 
@@ -113,7 +142,6 @@ export const ParticipantGrid: React.FC<ParticipantGridProps> = ({
       : allParticipants[0];
     const otherParticipants = allParticipants.filter(p => p.id !== mainParticipant.id);
 
-  const padding = hasSidePanel ? 'p-2' : 'p-4';
   const sidebarWidth = hasSidePanel 
     ? 'w-20 sm:w-24 md:w-32 lg:w-40' 
     : 'w-24 sm:w-32 md:w-40 lg:w-48';
