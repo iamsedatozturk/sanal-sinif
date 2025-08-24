@@ -342,22 +342,6 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
     window.open(document.url, '_blank');
   };
 
-
-  const handlePresentationPageChange = (page: number) => {
-    if (presentationState) {
-      const updatedPresentation = {
-        ...presentationState,
-        currentPage: page,
-      };
-      setPresentationState(updatedPresentation);
-      
-      // SignalR ile diğer katılımcılara bildir
-      if (signalRServiceRef.current) {
-        signalRServiceRef.current.changePresentationPage(classSession.id, page);
-      }
-    }
-  };
-
   const handleStartScreenShare = async () => {
     try {
       const stream = await navigator.mediaDevices.getDisplayMedia({

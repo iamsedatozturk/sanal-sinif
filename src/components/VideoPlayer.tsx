@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash, FaPhone } from 'react-icons/fa';
+import { FaMicrophoneSlash, FaVideoSlash } from 'react-icons/fa';
 
 // VideoOff component replacement
 const VideoOff: React.FC<{ size?: number; className?: string }> = ({ size = 24, className = '' }) => (
