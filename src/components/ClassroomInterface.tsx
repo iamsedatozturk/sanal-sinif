@@ -14,7 +14,7 @@ interface ClassroomInterfaceProps {
   onLeaveClass: () => void;
 }
 
-type SidePanelType = 'chat' | 'participants' | 'documents' | 'attendance' | 'handraises' | 'layout' | 'settings' | null;
+type SidePanelType = 'chat' | 'participants' | 'documents' | 'handraises' | 'layout' | 'settings' | null;
 
 export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
   classSession,
@@ -43,6 +43,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
   const [messageMode, setMessageMode] = useState<'public' | 'private' | 'announcement'>('public');
   const [selectedRecipient, setSelectedRecipient] = useState<{id: string; name: string} | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [participantsActiveTab, setParticipantsActiveTab] = useState<'participants' | 'attendance'>('participants');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [classSettings, setClassSettings] = useState<ClassSettings>({
@@ -537,7 +538,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
 
     const panelContent = () => {
       switch (activeSidePanel) {
-        case 'chat':
+        case 'chat': {
           const availableRecipients = participants.filter(p => p.id !== currentUser.id);
           return (
             <div className="h-full bg-white flex flex-col text-gray-900">
@@ -706,117 +707,180 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
               </form>
             </div>
           );
+        }
 
-        case 'participants':
+        case 'participants': {
           return (
             <div className="h-full bg-white flex flex-col text-gray-900">
               <div className="p-4 border-b border-gray-200">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-3">
                   <h3 className="text-lg font-semibold text-gray-900">Katılımcılar ({participants.length + 1})</h3>
                   <button onClick={() => setActiveSidePanel(null)}>
                     <FaTimes className="text-gray-500" />
                   </button>
                 </div>
-              </div>
-              {currentUser.role === 'teacher' && participants.length > 0 && (
-                <div className="flex">
+                
+                {/* Tab Navigation */}
+                <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
                   <button
-                    onClick={async () => {
-                      if (signalRServiceRef.current && currentUser.role === 'teacher') {
-                        const now = new Date();
-                        // Remove all non-teacher participants
-                        const nonTeacherIds = participants.filter(p => !p.isTeacher).map(p => p.id);
-                        for (const participantId of nonTeacherIds) {
-                          await signalRServiceRef.current.kickParticipant(classSession.id, participantId);
-                        }
-                        setParticipants(prev => prev.filter(p => p.isTeacher));
-                        setAttendanceRecords(prev => prev.map(r => {
-                          if (nonTeacherIds.includes(r.studentId) && !r.leaveTime) {
-                            const leaveTime = now.toISOString();
-                            const join = new Date(r.joinTime);
-                            const leave = now;
-                            const totalDurationMinutes = Math.max(1, Math.round((leave.getTime() - join.getTime()) / 60000));
-                            return { ...r, leaveTime, totalDurationMinutes };
-                          }
-                          return r;
-                        }));
-                      }
-                    }}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white p-2 shadow text-sm transition-all"
+                    onClick={() => setParticipantsActiveTab('participants')}
+                    className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all ${
+                      participantsActiveTab === 'participants'
+                        ? 'bg-white text-blue-600 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
                   >
-                    Tüm Katılımcıları Çıkar
+                    <FaUsers className="inline mr-1" size={14} />
+                    Katılımcılar
+                  </button>
+                  <button
+                    onClick={() => setParticipantsActiveTab('attendance')}
+                    className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all ${
+                      participantsActiveTab === 'attendance'
+                        ? 'bg-white text-blue-600 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <FaClipboardList className="inline mr-1" size={14} />
+                    Katılım Raporu
                   </button>
                 </div>
-              )}
-              <div className="flex-1 overflow-y-auto p-2">
-                <div className="space-y-2">
-                  {/* Current User */}
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-blue-50">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                        {currentUser.name.charAt(0)}
-                      </div>
-                      <span className="text-gray-900">{currentUser.name} (Siz)</span>
+              </div>
+              
+              {participantsActiveTab === 'participants' && (
+                <>
+                  {currentUser.role === 'teacher' && participants.length > 0 && (
+                    <div className="flex">
+                      <button
+                        onClick={async () => {
+                          if (signalRServiceRef.current && currentUser.role === 'teacher') {
+                            const now = new Date();
+                            // Remove all non-teacher participants
+                            const nonTeacherIds = participants.filter(p => !p.isTeacher).map(p => p.id);
+                            for (const participantId of nonTeacherIds) {
+                              await signalRServiceRef.current.kickParticipant(classSession.id, participantId);
+                            }
+                            setParticipants(prev => prev.filter(p => p.isTeacher));
+                            setAttendanceRecords(prev => prev.map(r => {
+                              if (nonTeacherIds.includes(r.studentId) && !r.leaveTime) {
+                                const leaveTime = now.toISOString();
+                                const join = new Date(r.joinTime);
+                                const leave = now;
+                                const totalDurationMinutes = Math.max(1, Math.round((leave.getTime() - join.getTime()) / 60000));
+                                return { ...r, leaveTime, totalDurationMinutes };
+                              }
+                              return r;
+                            }));
+                          }
+                        }}
+                        className="w-full bg-red-600 hover:bg-red-700 text-white p-2 shadow text-sm transition-all"
+                      >
+                        Tüm Katılımcıları Çıkar
+                      </button>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      {currentUser.role === 'teacher' && (
-                        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Öğretmen</span>
-                      )}
+                  )}
+                  <div className="flex-1 overflow-y-auto p-2">
+                    <div className="space-y-2">
+                      {/* Current User */}
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-blue-50">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                            {currentUser.name.charAt(0)}
+                          </div>
+                          <span className="text-gray-900">{currentUser.name} (Siz)</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          {currentUser.role === 'teacher' && (
+                            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Öğretmen</span>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Other Participants */}
+                      {participants.map((participant) => (
+                        <div key={participant.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                              {participant.name.charAt(0)}
+                            </div>
+                            <span
+                              className="text-gray-900 cursor-pointer hover:underline"
+                              onClick={() => {
+                                setMessageMode('private');
+                                setSelectedRecipient({ id: participant.id, name: participant.name });
+                                setActiveSidePanel('chat');
+                              }}
+                            >
+                              {participant.name}
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            {/* Ses aç/kapat butonu */}
+                            {currentUser.role === 'teacher' && !participant.isTeacher && (
+                              <button
+                                onClick={async () => {
+                                  await handleMuteParticipant(participant.id, !participant.isAudioMuted);
+                                }}
+                                className={`p-1 rounded transition-colors ${participant.isAudioMuted ? 'text-green-600 hover:bg-green-50' : 'text-yellow-600 hover:bg-yellow-50'}`}
+                                title={participant.isAudioMuted ? 'Sesi Aç' : 'Sesi Kapat'}
+                              >
+                                {participant.isAudioMuted ? <FaMicrophone /> : <FaMicrophoneSlash />}
+                              </button>
+                            )}
+                            {/* Video durumu gösterimi */}
+                            {participant.isVideoMuted && <FaVideoSlash className="text-red-500 text-sm" />}
+                            {participant.isTeacher && (
+                              <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Öğretmen</span>
+                            )}
+                            {currentUser.role === 'teacher' && !participant.isTeacher && (
+                              <button
+                                onClick={() => setKickingParticipant({ id: participant.id, name: participant.name })}
+                                className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+                                title="Sınıftan Çıkar"
+                              >
+                                <FaUserTimes size={12} />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  
-                  {/* Other Participants */}
-                  {participants.map((participant) => (
-                    <div key={participant.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                          {participant.name.charAt(0)}
-                        </div>
-                        <span
-                          className="text-gray-900 cursor-pointer hover:underline"
-                          onClick={() => {
-                            setMessageMode('private');
-                            setSelectedRecipient({ id: participant.id, name: participant.name });
-                            setActiveSidePanel('chat');
-                          }}
-                        >
-                          {participant.name}
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        {/* Ses aç/kapat butonu */}
-                        {currentUser.role === 'teacher' && !participant.isTeacher && (
-                          <button
-                            onClick={async () => {
-                              await handleMuteParticipant(participant.id, !participant.isAudioMuted);
-                            }}
-                            className={`p-1 rounded transition-colors ${participant.isAudioMuted ? 'text-green-600 hover:bg-green-50' : 'text-yellow-600 hover:bg-yellow-50'}`}
-                            title={participant.isAudioMuted ? 'Sesi Aç' : 'Sesi Kapat'}
-                          >
-                            {participant.isAudioMuted ? <FaMicrophone /> : <FaMicrophoneSlash />}
-                          </button>
-                        )}
-                        {/* Video durumu gösterimi */}
-                        {participant.isVideoMuted && <FaVideoSlash className="text-red-500 text-sm" />}
-                        {participant.isTeacher && (
-                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Öğretmen</span>
-                        )}
-                        {currentUser.role === 'teacher' && !participant.isTeacher && (
-                          <button
-                            onClick={() => setKickingParticipant({ id: participant.id, name: participant.name })}
-                            className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                            title="Sınıftan Çıkar"
-                          >
-                            <FaUserTimes size={12} />
-                          </button>
-                        )}
-                      </div>
+                </>
+              )}
+              
+              {participantsActiveTab === 'attendance' && (
+                <div className="flex-1 overflow-y-auto p-4">
+                  {attendanceRecords.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <FaClipboardList size={32} className="mx-auto mb-4 text-gray-300" />
+                      <p className="text-sm text-gray-600">Henüz katılım kaydı bulunmamaktadır.</p>
                     </div>
-                  ))}
+                  ) : (
+                    <div className="space-y-3">
+                      {attendanceRecords.map((record) => (
+                        <div key={record.id} className="p-3 border border-gray-200 rounded-lg">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-medium text-gray-800">{record.studentName}</h4>
+                            <span className="text-sm font-semibold text-blue-600">
+                              {formatDuration(record.totalDurationMinutes)}
+                            </span>
+                          </div>
+                          <div className="text-xs text-gray-600 space-y-1">
+                            <div>Giriş: {formatTime(record.joinTime)}</div>
+                            <div>
+                              Çıkış: {record.leaveTime ? formatTime(record.leaveTime) : 'Devam ediyor'}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
+              )}
             </div>
           );
+        }
 
         case 'documents':
           return (
@@ -930,49 +994,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
             </div>
           );
 
-        case 'attendance':
-          return (
-            <div className="h-full bg-white flex flex-col">
-              <div className="p-4 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Katılım Raporu</h3>
-                  <button onClick={() => setActiveSidePanel(null)}>
-                    <FaTimes className="text-gray-500" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-4">
-                {attendanceRecords.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <FaClipboardList size={32} className="mx-auto mb-4 text-gray-300" />
-                    <p className="text-sm text-gray-600">Henüz katılım kaydı bulunmamaktadır.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {attendanceRecords.map((record) => (
-                      <div key={record.id} className="p-3 border border-gray-200 rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium text-gray-800">{record.studentName}</h4>
-                          <span className="text-sm font-semibold text-blue-600">
-                            {formatDuration(record.totalDurationMinutes)}
-                          </span>
-                        </div>
-                        <div className="text-xs text-gray-600 space-y-1">
-                          <div>Giriş: {formatTime(record.joinTime)}</div>
-                          <div>
-                            Çıkış: {record.leaveTime ? formatTime(record.leaveTime) : 'Devam ediyor'}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-
-        case 'handraises':
+        case 'handraises': {
           const activeHandRaises = handRaises.filter(hr => hr.isActive);
           return (
             <div className="h-full bg-white flex flex-col">
@@ -1037,6 +1059,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
               </div>
             </div>
           );
+        }
 
         case 'layout':
           return (
@@ -1512,16 +1535,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                     )}
                   </button>
 
-                  {/* Attendance Button */}
-                  <button
-                    onClick={() => toggleSidePanel('attendance')}
-                    className={`p-2 rounded-lg transition-all ${
-                      activeSidePanel === 'attendance' ? 'bg-blue-600 text-white' : 'bg-gray-700 hover:bg-gray-600 text-white'
-                    }`}
-                    title="Katılım Raporu"
-                  >
-                    <FaClipboardList size={16} />
-                  </button>
+
 
                   {/* Mute All Button */}
                   <button
