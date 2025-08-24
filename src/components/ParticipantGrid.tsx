@@ -61,28 +61,42 @@ export const ParticipantGrid: React.FC<ParticipantGridProps> = ({
   const renderGridLayout = () => {
     const getGridClass = (participantCount: number) => {
       if (participantCount === 1) return 'grid-cols-1';
-      if (participantCount <= 2) return 'grid-cols-1 md:grid-cols-2';
-      if (participantCount <= 4) return 'grid-cols-1 md:grid-cols-2';
-      if (participantCount <= 6) return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
-      return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+      if (participantCount <= 2) return 'grid-cols-1 sm:grid-cols-2';
+      if (participantCount <= 4) return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-2';
+      if (participantCount <= 6) return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+      if (participantCount <= 9) return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+      return 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4';
     };
 
     const getGridRows = (participantCount: number) => {
       if (participantCount === 1) return 'grid-rows-1';
-      if (participantCount <= 2) return 'grid-rows-1 md:grid-rows-1';
-      if (participantCount <= 4) return 'grid-rows-2';
-      if (participantCount <= 6) return 'grid-rows-2 lg:grid-rows-2';
-      return 'grid-rows-3';
+      if (participantCount <= 2) return 'grid-rows-1 sm:grid-rows-1';
+      if (participantCount <= 4) return 'grid-rows-2 lg:grid-rows-2';
+      if (participantCount <= 6) return 'grid-rows-3 sm:grid-rows-2';
+      if (participantCount <= 9) return 'grid-rows-3';
+      return 'grid-rows-4 sm:grid-rows-3';
+    };
+
+    const getPadding = (participantCount: number) => {
+      if (participantCount === 1) return 'p-4 sm:p-8';
+      if (participantCount <= 4) return 'p-2 sm:p-4';
+      return 'p-1 sm:p-2';
+    };
+
+    const getGap = (participantCount: number) => {
+      if (participantCount === 1) return 'gap-0';
+      if (participantCount <= 4) return 'gap-2 sm:gap-3';
+      return 'gap-1 sm:gap-2';
     };
 
     // Tüm layout'larda tam yükseklik için h-screen kullan
     return (
-      <div className="h-screen flex items-center justify-center p-0">
-        <div className={mainVideoContainerClass + ' h-full'}>
-          <div className={`h-full grid ${getGridClass(allParticipants.length)} ${getGridRows(allParticipants.length)} gap-3 place-items-stretch`}>
+      <div className="h-full flex items-center justify-center overflow-hidden">
+        <div className={`w-full h-full flex flex-col justify-center ${getPadding(allParticipants.length)}`}>
+          <div className={`h-full grid ${getGridClass(allParticipants.length)} ${getGridRows(allParticipants.length)} ${getGap(allParticipants.length)} place-items-stretch`}>
             {allParticipants.map((participant) => (
-              <div key={participant.id} className="w-full h-full max-h-full flex items-stretch justify-stretch">
-                <div className="w-full h-full rounded-xl overflow-hidden flex">
+              <div key={participant.id} className="w-full h-full max-h-full flex items-stretch justify-stretch min-h-0">
+                <div className="w-full h-full rounded-lg sm:rounded-xl overflow-hidden flex">
                   {renderParticipant(participant, false)}
                 </div>
               </div>
@@ -100,7 +114,9 @@ export const ParticipantGrid: React.FC<ParticipantGridProps> = ({
     const otherParticipants = allParticipants.filter(p => p.id !== mainParticipant.id);
 
   const padding = hasSidePanel ? 'p-2' : 'p-4';
-  const sidebarWidth = hasSidePanel ? 'w-64 min-w-[16rem] max-w-[22rem]' : 'w-64 min-w-[12rem] max-w-[15rem]';
+  const sidebarWidth = hasSidePanel 
+    ? 'w-20 sm:w-24 md:w-32 lg:w-40' 
+    : 'w-24 sm:w-32 md:w-40 lg:w-48';
 
     // Eğer hiç katılımcı yoksa, video player öğretmen odaklı gibi ortalanır ve geniş olur
     return (
@@ -136,10 +152,12 @@ export const ParticipantGrid: React.FC<ParticipantGridProps> = ({
     // Sadece öğretmen gösterilecek, katılımcılar asla gösterilmeyecek
     const teacher = allParticipants.find(p => p.isTeacher) || allParticipants[0];
     return (
-      <div className="h-screen flex items-center justify-center p-0">
-        <div className={mainVideoContainerClass + ' h-full'}>
+      <div className="h-full flex items-center justify-center overflow-hidden">
+        <div className="w-full h-full flex flex-col justify-center p-2 sm:p-4 lg:p-8">
           <div className="h-full w-full max-h-full flex items-center justify-center">
-            {renderParticipant(teacher, true)}
+            <div className="w-full h-full rounded-lg sm:rounded-xl overflow-hidden">
+              {renderParticipant(teacher, true)}
+            </div>
           </div>
         </div>
       </div>

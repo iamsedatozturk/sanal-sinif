@@ -36,7 +36,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   }, [stream]);
 
   return (
-    <div className="relative bg-gray-900 rounded-lg overflow-hidden p-2 h-full">
+    <div className="relative bg-gray-900 rounded-md sm:rounded-lg overflow-hidden p-1 sm:p-2 h-full">
       <video
         ref={videoRef}
         autoPlay
@@ -46,7 +46,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       />
       
       {/* User name overlay */}
-      <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-sm">
+      <div className="absolute bottom-1 sm:bottom-2 left-1 sm:left-2 bg-black bg-opacity-50 text-white px-1 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm">
         {userName} {isLocal && '(You)'}
       </div>
 
@@ -54,16 +54,16 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       {!isVideoEnabled && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
           <div className="text-center text-white">
-            <VideoOff size={32} className="mx-auto mb-2 text-white" />
-            <p className="text-sm">{userName}</p>
+            <VideoOff size={24} className="mx-auto mb-1 sm:mb-2 text-white sm:size-8" />
+            <p className="text-xs sm:text-sm">{userName}</p>
           </div>
         </div>
       )}
 
       {/* Audio indicator */}
       {!isAudioEnabled && (
-        <div className="absolute top-2 right-2 bg-red-500 rounded-full p-1">
-          <FaMicrophoneSlash size={16} className="text-white" />
+        <div className="absolute top-1 sm:top-2 right-1 sm:right-2 bg-red-500 rounded-full p-0.5 sm:p-1">
+          <FaMicrophoneSlash size={12} className="text-white sm:size-4" />
         </div>
       )}
     </div>

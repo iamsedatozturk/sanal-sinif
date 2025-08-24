@@ -271,18 +271,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Sanal Sınıf Dashboard</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Sanal Sınıf Dashboard</h1>
               <p className="text-gray-600">Hoş geldiniz, {currentUser.name}</p>
             </div>
             {currentUser.role === 'teacher' && (
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center justify-center space-x-2 bg-blue-600 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto"
               >
                 <FaPlus size={20} />
-                <span>Yeni Sınıf Oluştur</span>
+                <span className="hidden sm:inline">Yeni Sınıf Oluştur</span>
+                <span className="sm:hidden">Yeni Sınıf</span>
               </button>
             )}
           </div>
@@ -292,19 +293,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-lg shadow-md p-6"
+            className="bg-white rounded-lg shadow-md p-4 sm:p-6"
           >
             <div className="flex items-center">
-              <div className="p-3 bg-blue-100 rounded-full">
-                <FaCalendarAlt className="text-blue-600" size={24} />
+              <div className="p-2 sm:p-3 bg-blue-100 rounded-full">
+                <FaCalendarAlt className="text-blue-600" size={20} />
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Toplam Sınıf</p>
-                <p className="text-2xl font-bold text-gray-900">{scheduledClasses.length}</p>
+              <div className="ml-3 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Toplam Sınıf</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900">{scheduledClasses.length}</p>
               </div>
             </div>
           </motion.div>
@@ -313,15 +314,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-lg shadow-md p-6"
+            className="bg-white rounded-lg shadow-md p-4 sm:p-6"
           >
             <div className="flex items-center">
-              <div className="p-3 bg-green-100 rounded-full">
-                <FaPlay className="text-green-600" size={24} />
+              <div className="p-2 sm:p-3 bg-green-100 rounded-full">
+                <FaPlay className="text-green-600" size={20} />
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Aktif Sınıf</p>
-                <p className="text-2xl font-bold text-gray-900">
+              <div className="ml-3 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Aktif Sınıf</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900">
                   {scheduledClasses.filter(c => c.isActive).length}
                 </p>
               </div>
@@ -332,15 +333,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-lg shadow-md p-6"
+            className="bg-white rounded-lg shadow-md p-4 sm:p-6 sm:col-span-2 lg:col-span-1"
           >
             <div className="flex items-center">
-              <div className="p-3 bg-purple-100 rounded-full">
-                <FaUsers className="text-purple-600" size={24} />
+              <div className="p-2 sm:p-3 bg-purple-100 rounded-full">
+                <FaUsers className="text-purple-600" size={20} />
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Toplam Katılımcı</p>
-                <p className="text-2xl font-bold text-gray-900">
+              <div className="ml-3 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Toplam Katılımcı</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900">
                   {scheduledClasses.reduce((sum, c) => sum + c.participantCount, 0)}
                 </p>
               </div>
@@ -350,32 +351,32 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
         {/* Scheduled Classes */}
         <div className="bg-white rounded-lg shadow-md">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Programlı Sınıflar</h2>
+          <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Programlı Sınıflar</h2>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {scheduledClasses.length === 0 ? (
               <div className="text-center py-12">
                 <FaCalendarAlt size={48} className="mx-auto text-gray-400 mb-4" />
                 <p className="text-gray-500">Henüz programlanmış sınıf bulunmamaktadır.</p>
               </div>
             ) : (
-              <div className="grid gap-6">
+              <div className="grid gap-4 sm:gap-6">
                 {scheduledClasses.map((classSession, index) => (
                   <motion.div
                     key={classSession.id}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
+                    className="border border-gray-200 rounded-lg p-4 sm:p-6 hover:shadow-md transition-shadow"
                   >
-                    <div className="flex items-start justify-between">
+                    <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between space-y-4 lg:space-y-0">
                       <div className="flex-1">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">
+                        <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 mb-2">
+                          <h3 className="text-base sm:text-lg font-semibold text-gray-900 break-words">
                             {classSession.name}
                           </h3>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium self-start ${
                             classSession.isActive
                               ? 'bg-green-100 text-green-800'
                               : canJoinClass(classSession.scheduledStartTime)
@@ -391,48 +392,48 @@ export const Dashboard: React.FC<DashboardProps> = ({
                           </span>
                         </div>
                         
-                        <p className="text-gray-600 mb-3">{classSession.description}</p>
+                        <p className="text-gray-600 mb-3 text-sm sm:text-base">{classSession.description}</p>
                         
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
                           <div className="flex items-center space-x-2">
-                            <FaCalendarAlt size={14} />
-                            <span>{formatDateTime(classSession.scheduledStartTime)}</span>
+                            <FaCalendarAlt size={12} className="flex-shrink-0" />
+                            <span className="truncate">{formatDateTime(classSession.scheduledStartTime)}</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <FaClock size={14} />
+                            <FaClock size={12} className="flex-shrink-0" />
                             <span>{classSession.duration} dakika</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <FaUsers size={14} />
+                            <FaUsers size={12} className="flex-shrink-0" />
                             <span>{classSession.participantCount}/{classSession.maxParticipants}</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <FaEye size={14} />
-                            <span>{getTimeUntilClass(classSession.scheduledStartTime)}</span>
+                            <FaEye size={12} className="flex-shrink-0" />
+                            <span className="truncate">{getTimeUntilClass(classSession.scheduledStartTime)}</span>
                           </div>
                         </div>
                       </div>
                       
-                      <div className="flex items-center space-x-2 ml-4">
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 lg:ml-4 w-full lg:w-auto">
                         {currentUser.role === 'teacher' && classSession.teacherId === currentUser.id && (
-                          <>
+                          <div className="flex space-x-2">
                             <button
                               onClick={() => openEditModal(classSession)}
                               disabled={classSession.isActive}
-                              className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
                               title="Sınıfı Düzenle"
                             >
-                              <FaEdit size={16} />
+                              <FaEdit size={14} />
                             </button>
                             <button
                               onClick={() => openDeleteModal(classSession)}
                               disabled={classSession.isActive}
-                              className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
                               title="Sınıfı Sil"
                             >
-                              <FaTrash size={16} />
+                              <FaTrash size={14} />
                             </button>
-                          </>
+                          </div>
                         )}
                         
                         {canJoinClass(classSession.scheduledStartTime) && (
@@ -442,7 +443,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                                 ? handleStartClass(classSession)
                                 : onJoinClass(classSession)
                             }
-                            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                            className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base w-full sm:w-auto ${
                               currentUser.role === 'teacher' && classSession.teacherId === currentUser.id
                                 ? 'bg-green-600 text-white hover:bg-green-700'
                                 : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -466,17 +467,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
       {/* Create Class Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-lg max-w-2xl w-full max-h-[95vh] overflow-y-auto"
           >
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">Yeni Sınıf Oluştur</h2>
+            <div className="p-4 sm:p-6 border-b border-gray-200">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Yeni Sınıf Oluştur</h2>
             </div>
             
-            <form onSubmit={handleCreateClass} className="p-6 space-y-6">
+            <form onSubmit={handleCreateClass} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Sınıf Adı *
@@ -563,14 +564,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </div>
 
               {/* Sınıf Ayarları */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Sınıf Ayarları</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <h4 className="font-medium text-gray-700">Katılımcı İzinleri</h4>
-                    
-                    <label className="flex items-center space-x-3">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Sınıf Ayarları</h3>
+                  
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                    <div className="space-y-4">
+                      <h4 className="font-medium text-gray-700">Katılımcı İzinleri</h4>                    <label className="flex items-center space-x-3">
                       <input
                         type="checkbox"
                         checked={formData.settings.allowHandRaise}
@@ -717,17 +716,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
       {/* Edit Class Modal */}
       {showEditModal && editingClass && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-lg max-w-2xl w-full max-h-[95vh] overflow-y-auto"
           >
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">Sınıfı Düzenle</h2>
+            <div className="p-4 sm:p-6 border-b border-gray-200">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Sınıfı Düzenle</h2>
             </div>
             
-            <form onSubmit={handleEditClass} className="p-6 space-y-6">
+            <form onSubmit={handleEditClass} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Sınıf Adı *

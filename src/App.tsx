@@ -39,12 +39,6 @@ function App() {
     setAppState('dashboard');
   };
 
-  const handleBackToRoleSelection = () => {
-    setCurrentUser(null);
-    setCurrentClass(null);
-    setAppState('role-selection');
-  };
-
   const handleCreateClass = (classData: Partial<ClassSession>) => {
     const newClass = {
       ...classData,
@@ -68,7 +62,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="App min-h-screen">
       <AnimatePresence mode="wait">
         {appState === 'role-selection' && (
           <motion.div

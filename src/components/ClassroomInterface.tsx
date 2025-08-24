@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { FaUsers, FaComments, FaUserPlus, FaTh, FaExpand, FaHandPaper, FaVolumeMute, FaVolumeUp, FaFile, FaDesktop, FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash, FaPhone, FaTimes, FaCompress, FaUserFriends, FaClipboardList, FaLayerGroup, FaWrench, FaCheck, FaUserTimes, FaDownload, FaTrash, FaEye, FaFilePdf, FaFileWord, FaFileImage, FaFileAlt, FaPaperPlane, FaBullhorn, FaUser } from 'react-icons/fa';
+import { FaUsers, FaComments, FaUserPlus, FaTh, FaExpand, FaHandPaper, FaVolumeMute, FaVolumeUp, FaFile, FaDesktop, FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash, FaPhone, FaTimes, FaCompress, FaUserFriends, FaClipboardList, FaLayerGroup, FaWrench, FaCheck, FaUserTimes, FaDownload, FaTrash, FaEye, FaFilePdf, FaFileWord, FaFileImage, FaFileAlt, FaPaperPlane, FaBullhorn, FaUser, FaBars } from 'react-icons/fa';
 import { ParticipantGrid } from './ParticipantGrid';
 import { KickParticipantModal } from './KickParticipantModal';
 import { ScreenSharePanel } from './ScreenSharePanel';
@@ -21,6 +21,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
   currentUser,
   onLeaveClass,
 }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [localStream, setLocalStream] = useState<MediaStream>();
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -542,11 +543,14 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
           const availableRecipients = participants.filter(p => p.id !== currentUser.id);
           return (
             <div className="h-full bg-white flex flex-col text-gray-900">
-              <div className="p-4 border-b border-gray-200">
+              <div className="p-3 sm:p-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Sınıf Sohbeti</h3>
-                  <button onClick={() => setActiveSidePanel(null)}>
-                    <FaTimes className="text-gray-500" />
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900">Sınıf Sohbeti</h3>
+                  <button 
+                    onClick={() => setActiveSidePanel(null)}
+                    className="p-1 hover:bg-gray-100 rounded lg:hidden"
+                  >
+                    <FaTimes className="text-gray-500" size={16} />
                   </button>
                 </div>
               </div>
@@ -1314,7 +1318,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
   };
 
   return (
-    <div className="min-h-screen h-screen flex flex-col bg-gray-900 text-white">
+    <div className="min-h-screen h-screen flex flex-col bg-gray-900 text-white overflow-hidden">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -1322,14 +1326,14 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
         className="h-full flex flex-col relative overflow-hidden"
       >
         {/* Main Content Area */}
-        <div className="flex-1 flex relative min-h-0 h-full">
+        <div className="flex-1 flex flex-col lg:flex-row relative min-h-0 h-full">
           {/* Left Content Area - Video and Screen Share */}
           <div className={`flex-1 flex flex-col min-h-0 h-full transition-all duration-300 ${!activeSidePanel ? 'flex items-center justify-center' : ''}`}>
             {/* Video Container - Panel kapalıyken ortalanmış */}
             <div className={`${!activeSidePanel ? 'w-full max-w-6xl' : 'w-full h-full'} flex flex-col min-h-0 h-full`}>
               {/* Screen Share Panel */}
               {(isScreenSharing || screenStream) && (
-                <div className="p-4 flex-shrink-0">
+                <div className="p-2 sm:p-4 flex-shrink-0">
                   <ScreenSharePanel
                     isSharing={isScreenSharing}
                     onStartShare={handleStartScreenShare}
@@ -1369,14 +1373,195 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
           </div>
 
           {/* Side Panel */}
-          {activeSidePanel && renderSidePanel()}
+          {activeSidePanel && (
+            <div className="absolute inset-0 lg:relative lg:inset-auto lg:w-80 bg-white z-20 lg:z-0 flex flex-col">
+              {renderSidePanel()}
+            </div>
+          )}
         </div>
 
         {/* Bottom Control Bar - Google Meet Style */}
-        <div className="bg-gray-800 p-3 flex-shrink-0">
-          <div className="flex items-center justify-between">
+        <div className="bg-gray-800 p-2 sm:p-3 flex-shrink-0">
+          {/* Mobile Layout */}
+          <div className="flex lg:hidden items-center justify-between">
+            {/* Left Side - Main Controls */}
+            <div className="flex items-center space-x-1 sm:space-x-2">
+              {/* Audio Control */}
+              {currentUser.role !== 'observer' && (
+                <button
+                  onClick={handleToggleAudio}
+                  className={`p-2 sm:p-3 rounded-full transition-all ${
+                    isAudioEnabled 
+                      ? 'bg-gray-700 hover:bg-gray-600 text-white' 
+                      : 'bg-red-600 hover:bg-red-700 text-white'
+                  }`}
+                  title={isAudioEnabled ? 'Mikrofonu Kapat' : 'Mikrofonu Aç'}
+                >
+                  {isAudioEnabled ? <FaMicrophone size={16} /> : <FaMicrophoneSlash size={16} />}
+                </button>
+              )}
+
+              {/* Video Control */}
+              {currentUser.role !== 'observer' && (
+                <button
+                  onClick={handleToggleVideo}
+                  className={`p-2 sm:p-3 rounded-full transition-all ${
+                    isVideoEnabled 
+                      ? 'bg-gray-700 hover:bg-gray-600 text-white' 
+                      : 'bg-red-600 hover:bg-red-700 text-white'
+                  }`}
+                  title={isVideoEnabled ? 'Kamerayı Kapat' : 'Kamerayı Aç'}
+                >
+                  {isVideoEnabled ? <FaVideo size={16} /> : <FaVideoSlash size={16} />}
+                </button>
+              )}
+
+              {/* Screen Share */}
+              {(currentUser.role === 'teacher' || classSettings.allowStudentScreenShare) && (
+                <button
+                  onClick={isScreenSharing ? handleStopScreenShare : handleStartScreenShare}
+                  className={`p-2 sm:p-3 rounded-full transition-all ${
+                    isScreenSharing 
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                      : 'bg-gray-700 hover:bg-gray-600 text-white'
+                  }`}
+                  title={isScreenSharing ? 'Paylaşımı Durdur' : 'Ekranı Paylaş'}
+                >
+                  <FaDesktop size={16} />
+                </button>
+              )}
+
+              {/* Hand Raise (Students) */}
+              {currentUser.role === 'student' && classSettings.allowHandRaise && (
+                <button
+                  onClick={handleRaiseHand}
+                  disabled={hasRaisedHand}
+                  className={`p-2 sm:p-3 rounded-full transition-all ${
+                    hasRaisedHand 
+                      ? 'bg-yellow-600 text-white cursor-not-allowed' 
+                      : 'bg-gray-700 hover:bg-gray-600 text-white hover:bg-yellow-600'
+                  }`}
+                  title={hasRaisedHand ? 'Parmak Kaldırıldı' : 'Parmak Kaldır'}
+                >
+                  <FaHandPaper size={16} />
+                </button>
+              )}
+
+              {/* Leave Call */}
+              <button
+                onClick={handleLeaveCall}
+                className="p-2 sm:p-3 rounded-full bg-red-600 hover:bg-red-700 text-white transition-all"
+                title="Aramayı Sonlandır"
+              >
+                <FaPhone size={16} />
+              </button>
+            </div>
+
+            {/* Right Side - Panel Controls */}
+            <div className="flex items-center">
+              <button
+                className="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white"
+                onClick={() => setMobileMenuOpen(true)}
+                aria-label="Menüyü Aç"
+              >
+                <FaBars size={20} />
+              </button>
+            </div>
+
+            {/* Hamburger Menu Modal */}
+            {mobileMenuOpen && (
+              <>
+                {/* Overlay */}
+                <div className="fixed inset-0 z-40 bg-black bg-opacity-40" onClick={() => setMobileMenuOpen(false)} />
+                {/* Drawer */}
+                <motion.div 
+                  initial={{ x: '100%' }} 
+                  animate={{ x: 0 }} 
+                  exit={{ x: '100%' }} 
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  className="fixed top-0 right-0 z-50 h-full w-80 max-w-full bg-white shadow-2xl flex flex-col p-0"
+                >
+                  <div className="flex items-center justify-between px-4 py-4 border-b">
+                    <span className="font-semibold text-gray-800 text-lg">Menü</span>
+                    <button onClick={() => setMobileMenuOpen(false)} className="p-2 rounded-full hover:bg-gray-100">
+                      <FaTimes size={22} />
+                    </button>
+                  </div>
+                  <div className="flex-1 flex flex-col space-y-1 px-2 py-2 overflow-y-auto">
+                    <button
+                      onClick={() => { setMobileMenuOpen(false); setTimeout(() => toggleSidePanel('chat'), 200); }}
+                      className={`flex items-center space-x-2 p-3 rounded-lg transition-all text-base ${activeSidePanel === 'chat' ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100 text-gray-700'}`}
+                    >
+                      <FaComments /> <span>Sohbet</span>
+                      {chatMessages.length > 0 && (
+                        <span className="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{chatMessages.length > 9 ? '9+' : chatMessages.length}</span>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => { setMobileMenuOpen(false); setTimeout(() => toggleSidePanel('participants'), 200); }}
+                      className={`flex items-center space-x-2 p-3 rounded-lg transition-all text-base ${activeSidePanel === 'participants' ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100 text-gray-700'}`}
+                    >
+                      <FaUserFriends /> <span>Katılımcılar</span>
+                    </button>
+                    <button
+                      onClick={() => { setMobileMenuOpen(false); setTimeout(() => toggleSidePanel('documents'), 200); }}
+                      className={`flex items-center space-x-2 p-3 rounded-lg transition-all text-base ${activeSidePanel === 'documents' ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100 text-gray-700'}`}
+                    >
+                      <FaFile /> <span>Dokümanlar</span>
+                    </button>
+                    <button
+                      onClick={() => { setMobileMenuOpen(false); setTimeout(() => toggleSidePanel('handraises'), 200); }}
+                      className={`flex items-center space-x-2 p-3 rounded-lg transition-all text-base ${activeSidePanel === 'handraises' ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100 text-gray-700'}`}
+                    >
+                      <FaHandPaper /> <span>Parmak Kaldıranlar</span>
+                      {handRaises.filter(hr => hr.isActive).length > 0 && (
+                        <span className="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{handRaises.filter(hr => hr.isActive).length}</span>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => { setMobileMenuOpen(false); setTimeout(() => toggleSidePanel('layout'), 200); }}
+                      className={`flex items-center space-x-2 p-3 rounded-lg transition-all text-base ${activeSidePanel === 'layout' ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100 text-gray-700'}`}
+                    >
+                      <FaLayerGroup /> <span>Görünüm</span>
+                    </button>
+                    <button
+                      onClick={() => { setMobileMenuOpen(false); setTimeout(() => toggleSidePanel('settings'), 200); }}
+                      className={`flex items-center space-x-2 p-3 rounded-lg transition-all text-base ${activeSidePanel === 'settings' ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100 text-gray-700'}`}
+                    >
+                      <FaWrench /> <span>Ayarlar</span>
+                    </button>
+                    {currentUser.role === 'teacher' && (
+                      <>
+                        <button
+                          onClick={() => { setMobileMenuOpen(false); setTimeout(() => simulateStudentJoin(), 200); }}
+                          className="flex items-center space-x-2 p-3 rounded-lg transition-all hover:bg-gray-100 text-gray-700 text-base"
+                        >
+                          <FaUserPlus /> <span>Öğrenci Ekle (Demo)</span>
+                        </button>
+                        <button
+                          onClick={() => { setMobileMenuOpen(false); setTimeout(() => handleMuteAll(), 200); }}
+                          className="flex items-center space-x-2 p-3 rounded-lg transition-all hover:bg-gray-100 text-gray-700 text-base"
+                        >
+                          {isAllMuted ? <FaVolumeUp /> : <FaVolumeMute />} <span>{isAllMuted ? 'Hepsinin Sesini Aç' : 'Hepsini Sustur'}</span>
+                        </button>
+                      </>
+                    )}
+                    <button
+                      onClick={() => { setMobileMenuOpen(false); setTimeout(() => toggleFullscreen(), 200); }}
+                      className="flex items-center space-x-2 p-3 rounded-lg transition-all hover:bg-gray-100 text-gray-700 text-base"
+                    >
+                      {isFullscreen ? <FaCompress /> : <FaExpand />} <span>{isFullscreen ? 'Tam Ekrandan Çık' : 'Tam Ekran'}</span>
+                    </button>
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </div>
+
+          {/* Desktop Layout */}
+          <div className="hidden lg:flex items-center justify-center relative">
             {/* Left Side - Meeting Info */}
-            <div className="flex items-center space-x-4 text-white min-w-0 flex-1">
+            <div className="flex items-center space-x-4 text-white absolute left-0">
               <div className="flex items-center space-x-2">
                 <span className="text-sm font-medium truncate">{classSession.name}</span>
                 <div className="w-px h-4 bg-gray-600"></div>
@@ -1399,7 +1584,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                   }`}
                   title={isAudioEnabled ? 'Mikrofonu Kapat' : 'Mikrofonu Aç'}
                 >
-                  {isAudioEnabled ? <FaMicrophone size={20} /> : <FaMicrophoneSlash size={20} />}
+                  {isAudioEnabled ? <FaMicrophone size={16} /> : <FaMicrophoneSlash size={16} />}
                 </button>
               )}
 
@@ -1414,7 +1599,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                   }`}
                   title={isVideoEnabled ? 'Kamerayı Kapat' : 'Kamerayı Aç'}
                 >
-                  {isVideoEnabled ? <FaVideo size={20} /> : <FaVideoSlash size={20} />}
+                  {isVideoEnabled ? <FaVideo size={16} /> : <FaVideoSlash size={16} />}
                 </button>
               )}
 
@@ -1429,7 +1614,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                   }`}
                   title={isScreenSharing ? 'Paylaşımı Durdur' : 'Ekranı Paylaş'}
                 >
-                  <FaDesktop size={20} />
+                  <FaDesktop size={16} />
                 </button>
               )}
 
@@ -1445,7 +1630,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                   }`}
                   title={hasRaisedHand ? 'Parmak Kaldırıldı' : 'Parmak Kaldır'}
                 >
-                  <FaHandPaper size={20} />
+                  <FaHandPaper size={16} />
                 </button>
               )}
 
@@ -1455,15 +1640,15 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                 className="p-3 rounded-full bg-red-600 hover:bg-red-700 text-white transition-all"
                 title="Aramayı Sonlandır"
               >
-                <FaPhone size={20} />
+                <FaPhone size={16} />
               </button>
             </div>
 
             {/* Right Side - Panel Controls & Participant Count */}
-            <div className="flex items-center space-x-2 min-w-0 flex-1 justify-end">
+            <div className="flex items-center space-x-2 absolute right-0">
               {/* Participant Count */}
               <div className="text-white text-sm mr-2">
-                <FaUsers size={16} className="inline mr-1" />
+                <FaUsers size={14} className="inline mr-1" />
                 {participants.length + 1}
               </div>
 
@@ -1473,7 +1658,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                 className="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition-all"
                 title={isFullscreen ? 'Tam Ekrandan Çık' : 'Tam Ekran'}
               >
-                {isFullscreen ? <FaCompress size={16} /> : <FaExpand size={16} />}
+                {isFullscreen ? <FaCompress size={14} /> : <FaExpand size={14} />}
               </button>
 
               {/* Chat */}
@@ -1485,9 +1670,9 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                   }`}
                   title="Sohbet"
                 >
-                  <FaComments size={16} />
+                  <FaComments size={14} />
                   {chatMessages.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center text-[10px]">
                       {chatMessages.length > 9 ? '9+' : chatMessages.length}
                     </span>
                   )}
@@ -1502,7 +1687,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                 }`}
                 title="Katılımcılar"
               >
-                <FaUserFriends size={16} />
+                <FaUserFriends size={14} />
               </button>
 
               {/* Teacher Only Options */}
@@ -1516,7 +1701,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                     }`}
                     title="Dokümanlar"
                   >
-                    <FaFile size={16} />
+                    <FaFile size={14} />
                   </button>
 
                   {/* Hand Raises Button */}
@@ -1527,15 +1712,13 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                     }`}
                     title="Parmak Kaldıranlar"
                   >
-                    <FaHandPaper size={16} />
+                    <FaHandPaper size={14} />
                     {handRaises.filter(hr => hr.isActive).length > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center text-[10px]">
                         {handRaises.filter(hr => hr.isActive).length}
                       </span>
                     )}
                   </button>
-
-
 
                   {/* Mute All Button */}
                   <button
@@ -1543,7 +1726,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                     className="p-2 rounded-lg transition-all bg-gray-700 hover:bg-gray-600 text-white"
                     title={isAllMuted ? 'Hepsinin Sesini Aç' : 'Hepsini Sustur'}
                   >
-                    {isAllMuted ? <FaVolumeUp size={16} /> : <FaVolumeMute size={16} />}
+                    {isAllMuted ? <FaVolumeUp size={14} /> : <FaVolumeMute size={14} />}
                   </button>
 
                   {/* Add Student Demo Button */}
@@ -1552,7 +1735,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                     className="p-2 rounded-lg transition-all bg-gray-700 hover:bg-gray-600 text-white"
                     title="Öğrenci Ekle (Demo)"
                   >
-                    <FaUserPlus size={16} />
+                    <FaUserPlus size={14} />
                   </button>
                 </>
               )}
@@ -1565,7 +1748,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                 }`}
                 title="Layout"
               >
-                <FaLayerGroup size={16} />
+                <FaLayerGroup size={14} />
               </button>
 
               {/* Settings Button */}
@@ -1576,7 +1759,7 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                 }`}
                 title="Ayarlar"
               >
-                <FaWrench size={16} />
+                <FaWrench size={14} />
               </button>
             </div>
           </div>
