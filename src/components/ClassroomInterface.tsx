@@ -1311,8 +1311,9 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
     };
 
     return (
-      <div className="w-80 bg-white shadow-xl border-l border-gray-200 flex-shrink-0 h-full">
+  <div className="w-full lg:w-80 bg-white shadow-xl border-l border-gray-200 flex-shrink-0 h-full">
         {panelContent()}
+        {/* Kapat butonu kaldırıldı, ana panelde gösterilecek */}
       </div>
     );
   };
@@ -1374,7 +1375,9 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
 
           {/* Side Panel */}
           {activeSidePanel && (
-            <div className="absolute inset-0 lg:relative lg:inset-auto lg:w-80 bg-white z-20 lg:z-0 flex flex-col">
+            <div
+              className="fixed inset-0 z-40 bg-white flex flex-col w-full h-full lg:relative lg:inset-auto lg:w-80 lg:h-full lg:z-0 lg:bg-white"
+            >
               {renderSidePanel()}
             </div>
           )}
@@ -1474,12 +1477,12 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                 {/* Overlay */}
                 <div className="fixed inset-0 z-40 bg-black bg-opacity-40" onClick={() => setMobileMenuOpen(false)} />
                 {/* Drawer */}
-                <motion.div 
-                  initial={{ x: '100%' }} 
-                  animate={{ x: 0 }} 
-                  exit={{ x: '100%' }} 
+                <motion.div
+                  initial={{ x: '100%' }}
+                  animate={{ x: 0 }}
+                  exit={{ x: '100%' }}
                   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  className="fixed top-0 right-0 z-50 h-full w-80 max-w-full bg-white shadow-2xl flex flex-col p-0"
+                  className="fixed inset-0 z-50 w-full h-full bg-white shadow-2xl flex flex-col p-0 lg:top-0 lg:right-0 lg:w-80 lg:h-full lg:inset-y-0 lg:left-auto"
                 >
                   <div className="flex items-center justify-between px-4 py-4 border-b">
                     <span className="font-semibold text-gray-800 text-lg">Menü</span>
