@@ -316,6 +316,17 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
     if (signalRServiceRef.current && currentUser.role === 'teacher') {
       await signalRServiceRef.current.kickParticipant(classSession.id, participantId);
       setParticipants(prev => prev.filter(p => p.id !== participantId));
+      // Update attendance record for kicked participant
+      setAttendanceRecords(prev => prev.map(r => {
+        if (r.studentId === participantId && !r.leaveTime) {
+          const leaveTime = new Date().toISOString();
+          const join = new Date(r.joinTime);
+          const leave = new Date(leaveTime);
+          const totalDurationMinutes = Math.max(1, Math.round((leave.getTime() - join.getTime()) / 60000));
+          return { ...r, leaveTime, totalDurationMinutes };
+        }
+        return r;
+      }));
     }
   };
 
@@ -707,7 +718,37 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                   </button>
                 </div>
               </div>
-              <div className="flex-1 overflow-y-auto p-4">
+              {currentUser.role === 'teacher' && participants.length > 0 && (
+                <div className="flex">
+                  <button
+                    onClick={async () => {
+                      if (signalRServiceRef.current && currentUser.role === 'teacher') {
+                        const now = new Date();
+                        // Remove all non-teacher participants
+                        const nonTeacherIds = participants.filter(p => !p.isTeacher).map(p => p.id);
+                        for (const participantId of nonTeacherIds) {
+                          await signalRServiceRef.current.kickParticipant(classSession.id, participantId);
+                        }
+                        setParticipants(prev => prev.filter(p => p.isTeacher));
+                        setAttendanceRecords(prev => prev.map(r => {
+                          if (nonTeacherIds.includes(r.studentId) && !r.leaveTime) {
+                            const leaveTime = now.toISOString();
+                            const join = new Date(r.joinTime);
+                            const leave = now;
+                            const totalDurationMinutes = Math.max(1, Math.round((leave.getTime() - join.getTime()) / 60000));
+                            return { ...r, leaveTime, totalDurationMinutes };
+                          }
+                          return r;
+                        }));
+                      }
+                    }}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white p-2 shadow text-sm transition-all"
+                  >
+                    Tüm Katılımcıları Çıkar
+                  </button>
+                </div>
+              )}
+              <div className="flex-1 overflow-y-auto p-2">
                 <div className="space-y-2">
                   {/* Current User */}
                   <div className="flex items-center justify-between p-2 rounded-lg bg-blue-50">
@@ -731,10 +772,31 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                         <div className="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
                           {participant.name.charAt(0)}
                         </div>
-                        <span className="text-gray-900">{participant.name}</span>
+                        <span
+                          className="text-gray-900 cursor-pointer hover:underline"
+                          onClick={() => {
+                            setMessageMode('private');
+                            setSelectedRecipient({ id: participant.id, name: participant.name });
+                            setActiveSidePanel('chat');
+                          }}
+                        >
+                          {participant.name}
+                        </span>
                       </div>
                       <div className="flex items-center space-x-1">
-                        {participant.isAudioMuted && <FaMicrophoneSlash className="text-red-500 text-sm" />}
+                        {/* Ses aç/kapat butonu */}
+                        {currentUser.role === 'teacher' && !participant.isTeacher && (
+                          <button
+                            onClick={async () => {
+                              await handleMuteParticipant(participant.id, !participant.isAudioMuted);
+                            }}
+                            className={`p-1 rounded transition-colors ${participant.isAudioMuted ? 'text-green-600 hover:bg-green-50' : 'text-yellow-600 hover:bg-yellow-50'}`}
+                            title={participant.isAudioMuted ? 'Sesi Aç' : 'Sesi Kapat'}
+                          >
+                            {participant.isAudioMuted ? <FaMicrophone /> : <FaMicrophoneSlash />}
+                          </button>
+                        )}
+                        {/* Video durumu gösterimi */}
                         {participant.isVideoMuted && <FaVideoSlash className="text-red-500 text-sm" />}
                         {participant.isTeacher && (
                           <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Öğretmen</span>
@@ -1032,19 +1094,6 @@ export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
                               <div className="w-1 h-1 bg-blue-300 rounded"></div>
                               <div className="w-1 h-1 bg-blue-300 rounded"></div>
                               <div className="w-1 h-1 bg-blue-300 rounded"></div>
-                              <div className="w-1 h-1 bg-blue-300 rounded"></div>
-                              <div className="w-1 h-1 bg-blue-300 rounded"></div>
-                              <div className="w-1 h-1 bg-blue-300 rounded"></div>
-                            </div>
-                          </div>
-                        )}
-                        {layout.type === 'interview' && (
-                          <div className="space-y-1">
-                            <div className="flex space-x-1">
-                              <div className="w-6 h-4 bg-green-500 rounded"></div>
-                              <div className="w-6 h-4 bg-blue-500 rounded"></div>
-                            </div>
-                            <div className="flex space-x-1">
                               <div className="w-1 h-1 bg-blue-300 rounded"></div>
                               <div className="w-1 h-1 bg-blue-300 rounded"></div>
                               <div className="w-1 h-1 bg-blue-300 rounded"></div>

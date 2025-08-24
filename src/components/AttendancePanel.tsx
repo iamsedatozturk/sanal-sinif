@@ -14,7 +14,7 @@ export const AttendancePanel: React.FC<AttendancePanelProps> = ({
   onClose,
 }) => {
   // Anlık süre güncellemesi için state ve timer
-  const [, setNow] = useState(Date.now());
+  const [now, setNow] = useState(Date.now());
   useEffect(() => {
     if (!isOpen) return;
     const interval = setInterval(() => setNow(Date.now()), 60000); // her dakika
@@ -30,10 +30,10 @@ export const AttendancePanel: React.FC<AttendancePanelProps> = ({
     return `${mins}m`;
   };
 
-  const getLiveDuration = (joinTime: string) => {
-    const now = new Date();
+  const getLiveDuration = (joinTime: string, nowValue: number) => {
+    const nowDate = new Date(nowValue);
     const join = new Date(joinTime);
-    const diffMs = now.getTime() - join.getTime();
+    const diffMs = nowDate.getTime() - join.getTime();
     const mins = Math.floor(diffMs / 60000);
     return formatDuration(mins);
   };
@@ -103,9 +103,13 @@ export const AttendancePanel: React.FC<AttendancePanelProps> = ({
                         {record.leaveTime ? formatTime(record.leaveTime) : 'Devam ediyor'}
                       </td>
                       <td className="border border-gray-300 px-4 py-3 text-gray-800 font-semibold">
-                        {record.leaveTime
-                          ? formatDuration(record.totalDurationMinutes)
-                          : getLiveDuration(record.joinTime)}
+                        {(() => {
+                          // Her zaman canlı süreyi hesapla, çıkış varsa oraya kadar, yoksa şimdiye kadar
+                          const endTime = record.leaveTime ? new Date(record.leaveTime).getTime() : now;
+                          const join = new Date(record.joinTime).getTime();
+                          const mins = Math.floor((endTime - join) / 60000);
+                          return formatDuration(mins);
+                        })()}
                       </td>
                     </tr>
                   ))}

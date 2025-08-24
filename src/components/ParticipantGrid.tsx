@@ -75,10 +75,10 @@ export const ParticipantGrid: React.FC<ParticipantGridProps> = ({
       return 'grid-rows-3';
     };
 
-    // Sağ panel açık/kapalı fark etmeksizin oranlar ve boyutlar aynı olmalı
+    // Tüm layout'larda tam yükseklik için h-screen kullan
     return (
-      <div className="h-full flex items-center justify-center p-0">
-        <div className={mainVideoContainerClass}>
+      <div className="h-screen flex items-center justify-center p-0">
+        <div className={mainVideoContainerClass + ' h-full'}>
           <div className={`h-full grid ${getGridClass(allParticipants.length)} ${getGridRows(allParticipants.length)} gap-3 place-items-stretch`}>
             {allParticipants.map((participant) => (
               <div key={participant.id} className="w-full h-full max-h-full flex items-stretch justify-stretch">
@@ -104,8 +104,8 @@ export const ParticipantGrid: React.FC<ParticipantGridProps> = ({
 
     // Eğer hiç katılımcı yoksa, video player öğretmen odaklı gibi ortalanır ve geniş olur
     return (
-      <div className="h-full flex items-center justify-center p-0">
-        <div className={mainVideoContainerClass}>
+      <div className="h-screen flex items-center justify-center p-0">
+        <div className={mainVideoContainerClass + ' h-full'}>
           <div className="flex h-full">
             <div className={`flex-1 min-w-0 flex items-center justify-center`}>
               <div className="w-full h-full flex items-center justify-center">
@@ -136,8 +136,8 @@ export const ParticipantGrid: React.FC<ParticipantGridProps> = ({
     // Sadece öğretmen gösterilecek, katılımcılar asla gösterilmeyecek
     const teacher = allParticipants.find(p => p.isTeacher) || allParticipants[0];
     return (
-      <div className="h-full flex items-center justify-center p-0">
-        <div className={mainVideoContainerClass}>
+      <div className="h-screen flex items-center justify-center p-0">
+        <div className={mainVideoContainerClass + ' h-full'}>
           <div className="h-full w-full max-h-full flex items-center justify-center">
             {renderParticipant(teacher, true)}
           </div>
