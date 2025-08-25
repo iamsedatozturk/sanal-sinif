@@ -6,7 +6,7 @@ import { KickParticipantModal } from './KickParticipantModal';
 import { ScreenSharePanel } from './ScreenSharePanel';
 import { SignalRService } from '../services/signalr';
 import { WebRTCService } from '../services/webrtc';
-import { Participant, AttendanceRecord, ClassSession, ChatMessage, VideoLayout, HandRaise, ClassDocument, ClassSettings } from '../types';
+import { Participant, AttendanceRecord, ClassSession, ChatMessage, VideoLayout, HandRaise, ClassDocument, ClassSettings } from '../types/models';
 
 interface ClassroomInterfaceProps {
   classSession: ClassSession;

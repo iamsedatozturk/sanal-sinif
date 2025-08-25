@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaPlus, FaCalendarAlt, FaClock, FaUsers, FaPlay, FaEdit, FaTrash, FaEye } from 'react-icons/fa';
-import { ClassSession, User } from '../types';
+import { ClassSession, User } from '../types/models';
 
 interface DashboardProps {
   currentUser: User;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaBook, FaUsers, FaClock, FaPlay, FaStop } from 'react-icons/fa';
-import { ClassSession } from '../types';
+import { ClassSession } from '../types/models';
 
 interface ClassListProps {
   onJoinClass: (classSession: ClassSession, userName: string) => void;
@@ -17,7 +17,9 @@ export const ClassList: React.FC<ClassListProps> = ({ onJoinClass, userRole }) =
       teacherId: 'teacher1',
       teacherName: 'Prof. Dr. Mehmet Özkan',
       startTime: new Date(Date.now()).toISOString(), // Started 15 mins ago
+      scheduledStartTime: new Date(Date.now()).toISOString(),
       isActive: true,
+      isScheduled: false,
       participantCount: 12,
     },
     {
@@ -26,19 +28,24 @@ export const ClassList: React.FC<ClassListProps> = ({ onJoinClass, userRole }) =
       teacherId: 'teacher2',
       teacherName: 'Dr. Ayşe Kaya',
       startTime: new Date(Date.now() - 1800000).toISOString(), // Started 30 mins ago
+      scheduledStartTime: new Date(Date.now() - 1800000).toISOString(),
       isActive: true,
+      isScheduled: false,
       participantCount: 8,
     },
   ]);
 
   const handleStartClass = () => {
+    const now = new Date().toISOString();
     const newSession: ClassSession = {
       id: `session-${Date.now()}`,
       name: 'Yeni Ders Oturumu',
       teacherId: 'current-teacher',
       teacherName: userName || 'Öğretmen',
-      startTime: new Date().toISOString(),
+      startTime: now,
+      scheduledStartTime: now,
       isActive: true,
+      isScheduled: false,
       participantCount: 0,
     };
     

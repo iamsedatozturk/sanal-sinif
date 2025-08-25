@@ -120,8 +120,6 @@ export interface ClassDocument {
   totalPages?: number;
 }
 
-
-
 export interface ScreenShareRequest {
   userId: string;
   userName: string;

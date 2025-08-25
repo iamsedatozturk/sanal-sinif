@@ -1,6 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { FaDesktop, FaTimes, FaStop, FaPlay } from 'react-icons/fa';
+import { FaDesktop, FaStop, FaPlay } from 'react-icons/fa';
 
 interface ScreenSharePanelProps {
   isSharing: boolean;

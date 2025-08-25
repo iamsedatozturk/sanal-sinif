@@ -17,7 +17,7 @@ export class WebRTCService {
         video: {
           width: { ideal: 1280 },
           height: { ideal: 720 },
-          framerate: { ideal: 30 },
+          frameRate: { ideal: 30 },
         },
         audio: {
           echoCancellation: true,

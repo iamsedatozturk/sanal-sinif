@@ -1,8 +1,8 @@
 import * as signalR from '@microsoft/signalr';
-import { SignalingMessage, AttendanceRecord, HandRaise, PresentationState, ChatMessage } from '../types';
+import { SignalingMessage, AttendanceRecord, HandRaise, PresentationState, ChatMessage } from '../types/models';
 
 export class SignalRService {
-  private connection: signalR.HubConnection;
+  private connection!: signalR.HubConnection;
   private isConnected: boolean = false;
   private demoMode: boolean = true; // Start in demo mode by default
   private onSignalingMessage?: (message: SignalingMessage) => void;

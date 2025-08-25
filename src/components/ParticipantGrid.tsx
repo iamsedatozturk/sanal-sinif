@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaMicrophoneSlash, FaExpand, FaUserTimes } from 'react-icons/fa';
 import { VideoPlayer } from './VideoPlayer';
-import { Participant, VideoLayout } from '../types';
+import { Participant, VideoLayout } from '../types/models';
 
 interface ParticipantGridProps {
   participants: Participant[];
@@ -78,7 +78,7 @@ export const ParticipantGrid: React.FC<ParticipantGridProps> = ({
     };
 
     const getPadding = (participantCount: number) => {
-      if (participantCount === 1) return 'p-4 sm:p-8';
+      if (participantCount === 1) return '';
       if (participantCount <= 4) return 'p-2 sm:p-4';
       return 'p-1 sm:p-2';
     };
@@ -181,7 +181,7 @@ export const ParticipantGrid: React.FC<ParticipantGridProps> = ({
     const teacher = allParticipants.find(p => p.isTeacher) || allParticipants[0];
     return (
       <div className="h-full flex items-center justify-center overflow-hidden">
-        <div className="w-full h-full flex flex-col justify-center p-2 sm:p-4 lg:p-8">
+        <div className="w-full h-full flex flex-col justify-center ">
           <div className="h-full w-full max-h-full flex items-center justify-center">
             <div className="w-full h-full rounded-lg sm:rounded-xl overflow-hidden">
               {renderParticipant(teacher, true)}

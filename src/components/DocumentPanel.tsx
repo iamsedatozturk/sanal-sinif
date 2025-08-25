@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { FaFile, FaUpload, FaDownload, FaTrash, FaEye, FaTimes, FaFilePdf, FaFileWord, FaFileImage, FaFileAlt, FaPlay, FaStop } from 'react-icons/fa';
-import { ClassDocument } from '../types';
+import { ClassDocument } from '../types/models';
 
 interface DocumentPanelProps {
   documents: ClassDocument[];

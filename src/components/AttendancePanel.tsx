@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaClock, FaUsers } from 'react-icons/fa';
-import { AttendanceRecord } from '../types';
+import { AttendanceRecord } from '../types/models';
 
 interface AttendancePanelProps {
   attendanceRecords: AttendanceRecord[];
@@ -28,14 +28,6 @@ export const AttendancePanel: React.FC<AttendancePanelProps> = ({
       return `${hours}h ${mins}m`;
     }
     return `${mins}m`;
-  };
-
-  const getLiveDuration = (joinTime: string, nowValue: number) => {
-    const nowDate = new Date(nowValue);
-    const join = new Date(joinTime);
-    const diffMs = nowDate.getTime() - join.getTime();
-    const mins = Math.floor(diffMs / 60000);
-    return formatDuration(mins);
   };
 
   const formatTime = (timeString: string) => {
