@@ -3,10 +3,10 @@ import { motion } from 'framer-motion';
 import { FaUsers, FaComments, FaUserPlus, FaTh, FaExpand, FaHandPaper, FaVolumeMute, FaVolumeUp, FaFile, FaDesktop, FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash, FaPhone, FaTimes, FaCompress, FaUserFriends, FaClipboardList, FaLayerGroup, FaWrench, FaCheck, FaUserTimes, FaDownload, FaTrash, FaEye, FaFilePdf, FaFileWord, FaFileImage, FaFileAlt, FaPaperPlane, FaBullhorn, FaUser, FaBars } from 'react-icons/fa';
 import { ParticipantGrid } from './ParticipantGrid';
 import { KickParticipantModal } from './KickParticipantModal';
-import { ScreenSharePanel } from './ScreenSharePanel';
 import { SignalRService } from '../services/signalr';
 import { WebRTCService } from '../services/webrtc';
 import { Participant, AttendanceRecord, ClassSession, ChatMessage, VideoLayout, HandRaise, ClassDocument, ClassSettings } from '../types/models';
+import { ScreenSharePanel } from './VirtualClass/Panels/ScreenSharePanel';
 
 interface ClassroomInterfaceProps {
   classSession: ClassSession;

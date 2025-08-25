@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaClock, FaUsers } from 'react-icons/fa';
-import { AttendanceRecord } from '../types/models';
+import { AttendanceRecord } from '../../../types/models';
 
 interface AttendancePanelProps {
   attendanceRecords: AttendanceRecord[];

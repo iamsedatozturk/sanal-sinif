@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaHandPaper, FaTimes, FaCheck } from 'react-icons/fa';
-import { HandRaise } from '../types/models';
+import { HandRaise } from '../../../types/models';
 
 interface HandRaisePanelProps {
   handRaises: HandRaise[];

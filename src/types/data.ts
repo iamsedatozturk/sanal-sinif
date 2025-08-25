@@ -1,0 +1,47 @@
+export const initialScheduledClasses = [
+    {
+      id: '1',
+      name: 'Matematik 101 - Diferansiyel Denklemler',
+      description: 'İleri matematik konuları ve uygulamaları',
+      teacherId: 'teacher1',
+      teacherName: 'Prof. Dr. Mehmet Özkan',
+      scheduledStartTime: new Date(Date.now() - 300000).toISOString(), // 5 minutes ago (can join)
+      startTime: '',
+      isActive: false,
+      isScheduled: true,
+      participantCount: 0,
+      maxParticipants: 30,
+      subject: 'Matematik',
+      duration: 90,
+    },
+    {
+      id: '2',
+      name: 'Fizik 201 - Kuantum Mekaniği',
+      description: 'Modern fizik ve kuantum teorisi temelleri',
+      teacherId: 'teacher2',
+      teacherName: 'Dr. Ayşe Kaya',
+      scheduledStartTime: new Date(Date.now() + 1800000).toISOString(), // 30 minutes from now
+      startTime: '',
+      isActive: false,
+      isScheduled: true,
+      participantCount: 0,
+      maxParticipants: 25,
+      subject: 'Fizik',
+      duration: 120,
+    },
+    {
+      id: '3',
+      name: 'Kimya 301 - Organik Kimya',
+      description: 'Organik bileşikler ve reaksiyon mekanizmaları',
+      teacherId: 'current-teacher',
+      teacherName: 'Dr. Ali Veli',
+      scheduledStartTime: new Date(Date.now() - 120000).toISOString(), // 2 minutes ago (can join)
+      startTime: '',
+      isActive: false,
+      isScheduled: true,
+      participantCount: 0,
+      maxParticipants: 20,
+      subject: 'Kimya',
+      duration: 75,
+    },
+  ]

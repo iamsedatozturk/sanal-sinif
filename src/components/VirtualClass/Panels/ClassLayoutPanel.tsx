@@ -6,9 +6,9 @@ import {
   FaDesktop,
   FaChalkboardTeacher,
 } from "react-icons/fa";
-import { VideoLayout } from "../types/models";
+import { VideoLayout } from "../../../types/models";
 
-interface LayoutSelectorProps {
+interface ClassLayoutPanelProps {
   currentLayout: VideoLayout;
   isOpen: boolean;
   onClose: () => void;
@@ -35,7 +35,7 @@ const layouts: VideoLayout[] = [
   },
 ];
 
-export const LayoutSelector: React.FC<LayoutSelectorProps> = ({
+export const ClassLayoutPanel: React.FC<ClassLayoutPanelProps> = ({
   currentLayout,
   isOpen,
   onClose,

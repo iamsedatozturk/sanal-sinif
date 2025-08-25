@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaPaperPlane, FaComments, FaTimes, FaUsers, FaUser, FaBullhorn } from 'react-icons/fa';
-import { ChatMessage } from '../types/models';
+import { ChatMessage } from '../../../types/models';
 
 interface ChatPanelProps {
   messages: ChatMessage[];

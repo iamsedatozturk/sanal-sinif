@@ -1,7 +1,17 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { FaPlus, FaCalendarAlt, FaClock, FaUsers, FaPlay, FaEdit, FaTrash, FaEye } from 'react-icons/fa';
-import { ClassSession, User } from '../types/models';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  FaPlus,
+  FaCalendarAlt,
+  FaClock,
+  FaUsers,
+  FaPlay,
+  FaEdit,
+  FaTrash,
+  FaEye,
+} from "react-icons/fa";
+import { ClassSession, User } from "../types/models";
+import { initialScheduledClasses } from "../types/data";
 
 interface DashboardProps {
   currentUser: User;
@@ -23,73 +33,28 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [editingClass, setEditingClass] = useState<ClassSession | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletingClass, setDeletingClass] = useState<ClassSession | null>(null);
-  const [scheduledClasses, setScheduledClasses] = useState<ClassSession[]>([
-    {
-      id: '1',
-      name: 'Matematik 101 - Diferansiyel Denklemler',
-      description: 'İleri matematik konuları ve uygulamaları',
-      teacherId: 'teacher1',
-      teacherName: 'Prof. Dr. Mehmet Özkan',
-      scheduledStartTime: new Date(Date.now() - 300000).toISOString(), // 5 minutes ago (can join)
-      startTime: '',
-      isActive: false,
-      isScheduled: true,
-      participantCount: 0,
-      maxParticipants: 30,
-      subject: 'Matematik',
-      duration: 90,
-    },
-    {
-      id: '2',
-      name: 'Fizik 201 - Kuantum Mekaniği',
-      description: 'Modern fizik ve kuantum teorisi temelleri',
-      teacherId: 'teacher2',
-      teacherName: 'Dr. Ayşe Kaya',
-      scheduledStartTime: new Date(Date.now() + 1800000).toISOString(), // 30 minutes from now
-      startTime: '',
-      isActive: false,
-      isScheduled: true,
-      participantCount: 0,
-      maxParticipants: 25,
-      subject: 'Fizik',
-      duration: 120,
-    },
-    {
-      id: '3',
-      name: 'Kimya 301 - Organik Kimya',
-      description: 'Organik bileşikler ve reaksiyon mekanizmaları',
-      teacherId: 'current-teacher',
-      teacherName: 'Dr. Ali Veli',
-      scheduledStartTime: new Date(Date.now() - 120000).toISOString(), // 2 minutes ago (can join)
-      startTime: '',
-      isActive: false,
-      isScheduled: true,
-      participantCount: 0,
-      maxParticipants: 20,
-      subject: 'Kimya',
-      duration: 75,
-    },
-  ]);
+  const [scheduledClasses, setScheduledClasses] =
+    useState<ClassSession[]>(initialScheduledClasses);
 
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    subject: '',
-    scheduledStartTime: '',
+    name: "",
+    description: "",
+    subject: "",
+    scheduledStartTime: "",
     duration: 60,
     maxParticipants: 30,
     settings: {
       allowHandRaise: true,
-      defaultMicrophoneState: 'muted' as 'muted' | 'unmuted',
-      defaultCameraState: 'on' as 'on' | 'off',
-      defaultLayout: 'grid',
+      defaultMicrophoneState: "muted" as "muted" | "unmuted",
+      defaultCameraState: "on" as "on" | "off",
+      defaultLayout: "grid",
       allowStudentScreenShare: false,
       allowStudentChat: true,
       allowPrivateMessages: true,
       autoMuteNewParticipants: true,
       recordSession: false,
       waitingRoomEnabled: false,
-    }
+    },
   });
 
   const canJoinClass = (scheduledTime: string) => {
@@ -104,7 +69,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     const scheduled = new Date(scheduledTime);
     const now = new Date();
     const diff = scheduled.getTime() - now.getTime();
-    
+
     if (diff <= 0) {
       // Sınıf başladıysa, ne kadar süredir devam ettiğini göster
       const elapsed = Math.abs(diff);
@@ -116,10 +81,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
       const remainingMinutes = elapsedMinutes % 60;
       return `${elapsedHours}s ${remainingMinutes}d devam ediyor`;
     }
-    
+
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    
+
     if (hours > 0) {
       return `${hours}s ${minutes}d kaldı`;
     }
@@ -137,43 +102,43 @@ export const Dashboard: React.FC<DashboardProps> = ({
       isScheduled: true,
       participantCount: 0,
     };
-    
+
     onCreateClass(newClass);
-    setScheduledClasses(prev => [...prev, newClass as ClassSession]);
+    setScheduledClasses((prev) => [...prev, newClass as ClassSession]);
     setShowCreateModal(false);
     setFormData({
-      name: '',
-      description: '',
-      subject: '',
-      scheduledStartTime: '',
+      name: "",
+      description: "",
+      subject: "",
+      scheduledStartTime: "",
       duration: 60,
       maxParticipants: 30,
       settings: {
         allowHandRaise: true,
-        defaultMicrophoneState: 'muted',
-        defaultCameraState: 'on',
-        defaultLayout: 'grid',
+        defaultMicrophoneState: "muted",
+        defaultCameraState: "on",
+        defaultLayout: "grid",
         allowStudentScreenShare: false,
         allowStudentChat: true,
         allowPrivateMessages: true,
         autoMuteNewParticipants: true,
         recordSession: false,
         waitingRoomEnabled: false,
-      }
+      },
     });
   };
 
   const handleEditClass = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingClass) return;
-    
+
     const updatedClass = {
       ...editingClass,
       ...formData,
     };
-    
-    setScheduledClasses(prev =>
-      prev.map(c => c.id === editingClass.id ? updatedClass : c)
+
+    setScheduledClasses((prev) =>
+      prev.map((c) => (c.id === editingClass.id ? updatedClass : c))
     );
     onEditClass(editingClass.id, formData);
     setShowEditModal(false);
@@ -183,8 +148,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   const handleDeleteClass = () => {
     if (!deletingClass) return;
-    
-    setScheduledClasses(prev => prev.filter(c => c.id !== deletingClass.id));
+
+    setScheduledClasses((prev) =>
+      prev.filter((c) => c.id !== deletingClass.id)
+    );
     onDeleteClass(deletingClass.id);
     setShowDeleteModal(false);
     setDeletingClass(null);
@@ -194,23 +161,25 @@ export const Dashboard: React.FC<DashboardProps> = ({
     setEditingClass(classSession);
     setFormData({
       name: classSession.name,
-      description: classSession.description || '',
-      subject: classSession.subject || '',
-      scheduledStartTime: new Date(classSession.scheduledStartTime).toISOString().slice(0, 16),
+      description: classSession.description || "",
+      subject: classSession.subject || "",
+      scheduledStartTime: new Date(classSession.scheduledStartTime)
+        .toISOString()
+        .slice(0, 16),
       duration: classSession.duration || 60,
       maxParticipants: classSession.maxParticipants || 30,
       settings: classSession.settings || {
         allowHandRaise: true,
-        defaultMicrophoneState: 'muted',
-        defaultCameraState: 'on',
-        defaultLayout: 'grid',
+        defaultMicrophoneState: "muted",
+        defaultCameraState: "on",
+        defaultLayout: "grid",
         allowStudentScreenShare: false,
         allowStudentChat: true,
         allowPrivateMessages: true,
         autoMuteNewParticipants: true,
         recordSession: false,
         waitingRoomEnabled: false,
-      }
+      },
     });
     setShowEditModal(true);
   };
@@ -222,24 +191,24 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   const resetForm = () => {
     setFormData({
-      name: '',
-      description: '',
-      subject: '',
-      scheduledStartTime: '',
+      name: "",
+      description: "",
+      subject: "",
+      scheduledStartTime: "",
       duration: 60,
       maxParticipants: 30,
       settings: {
         allowHandRaise: true,
-        defaultMicrophoneState: 'muted',
-        defaultCameraState: 'on',
-        defaultLayout: 'grid',
+        defaultMicrophoneState: "muted",
+        defaultCameraState: "on",
+        defaultLayout: "grid",
         allowStudentScreenShare: false,
         allowStudentChat: true,
         allowPrivateMessages: true,
         autoMuteNewParticipants: true,
         recordSession: false,
         waitingRoomEnabled: false,
-      }
+      },
     });
   };
 
@@ -249,20 +218,20 @@ export const Dashboard: React.FC<DashboardProps> = ({
       isActive: true,
       startTime: new Date().toISOString(),
     };
-    
-    setScheduledClasses(prev =>
-      prev.map(c => c.id === classSession.id ? updatedClass : c)
+
+    setScheduledClasses((prev) =>
+      prev.map((c) => (c.id === classSession.id ? updatedClass : c))
     );
     onJoinClass(updatedClass);
   };
 
   const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString('tr-TR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Date(dateString).toLocaleString("tr-TR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -273,10 +242,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Sanal Sınıf Dashboard</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                Sanal Sınıf Dashboard
+              </h1>
               <p className="text-gray-600">Hoş geldiniz, {currentUser.name}</p>
             </div>
-            {currentUser.role === 'teacher' && (
+            {currentUser.role === "teacher" && (
               <button
                 onClick={() => setShowCreateModal(true)}
                 className="flex items-center justify-center space-x-2 bg-blue-600 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto"
@@ -304,8 +275,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <FaCalendarAlt className="text-blue-600" size={20} />
               </div>
               <div className="ml-3 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">Toplam Sınıf</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900">{scheduledClasses.length}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">
+                  Toplam Sınıf
+                </p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900">
+                  {scheduledClasses.length}
+                </p>
               </div>
             </div>
           </motion.div>
@@ -321,9 +296,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <FaPlay className="text-green-600" size={20} />
               </div>
               <div className="ml-3 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">Aktif Sınıf</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">
+                  Aktif Sınıf
+                </p>
                 <p className="text-xl sm:text-2xl font-bold text-gray-900">
-                  {scheduledClasses.filter(c => c.isActive).length}
+                  {scheduledClasses.filter((c) => c.isActive).length}
                 </p>
               </div>
             </div>
@@ -340,9 +317,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <FaUsers className="text-purple-600" size={20} />
               </div>
               <div className="ml-3 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">Toplam Katılımcı</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">
+                  Toplam Katılımcı
+                </p>
                 <p className="text-xl sm:text-2xl font-bold text-gray-900">
-                  {scheduledClasses.reduce((sum, c) => sum + c.participantCount, 0)}
+                  {scheduledClasses.reduce(
+                    (sum, c) => sum + c.participantCount,
+                    0
+                  )}
                 </p>
               </div>
             </div>
@@ -352,13 +334,20 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Scheduled Classes */}
         <div className="bg-white rounded-lg shadow-md">
           <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Programlı Sınıflar</h2>
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+              Programlı Sınıflar
+            </h2>
           </div>
           <div className="p-4 sm:p-6">
             {scheduledClasses.length === 0 ? (
               <div className="text-center py-12">
-                <FaCalendarAlt size={48} className="mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500">Henüz programlanmış sınıf bulunmamaktadır.</p>
+                <FaCalendarAlt
+                  size={48}
+                  className="mx-auto text-gray-400 mb-4"
+                />
+                <p className="text-gray-500">
+                  Henüz programlanmış sınıf bulunmamaktadır.
+                </p>
               </div>
             ) : (
               <div className="grid gap-4 sm:gap-6">
@@ -376,28 +365,36 @@ export const Dashboard: React.FC<DashboardProps> = ({
                           <h3 className="text-base sm:text-lg font-semibold text-gray-900 break-words">
                             {classSession.name}
                           </h3>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium self-start ${
-                            classSession.isActive
-                              ? 'bg-green-100 text-green-800'
-                              : canJoinClass(classSession.scheduledStartTime)
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-gray-100 text-gray-800'
-                          }`}>
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium self-start ${
+                              classSession.isActive
+                                ? "bg-green-100 text-green-800"
+                                : canJoinClass(classSession.scheduledStartTime)
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
                             {classSession.isActive
-                              ? 'Aktif'
+                              ? "Aktif"
                               : canJoinClass(classSession.scheduledStartTime)
-                              ? 'Katılım Açık'
-                              : 'Beklemede'
-                            }
+                              ? "Katılım Açık"
+                              : "Beklemede"}
                           </span>
                         </div>
-                        
-                        <p className="text-gray-600 mb-3 text-sm sm:text-base">{classSession.description}</p>
-                        
+
+                        <p className="text-gray-600 mb-3 text-sm sm:text-base">
+                          {classSession.description}
+                        </p>
+
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
                           <div className="flex items-center space-x-2">
-                            <FaCalendarAlt size={12} className="flex-shrink-0" />
-                            <span className="truncate">{formatDateTime(classSession.scheduledStartTime)}</span>
+                            <FaCalendarAlt
+                              size={12}
+                              className="flex-shrink-0"
+                            />
+                            <span className="truncate">
+                              {formatDateTime(classSession.scheduledStartTime)}
+                            </span>
                           </div>
                           <div className="flex items-center space-x-2">
                             <FaClock size={12} className="flex-shrink-0" />
@@ -405,54 +402,66 @@ export const Dashboard: React.FC<DashboardProps> = ({
                           </div>
                           <div className="flex items-center space-x-2">
                             <FaUsers size={12} className="flex-shrink-0" />
-                            <span>{classSession.participantCount}/{classSession.maxParticipants}</span>
+                            <span>
+                              {classSession.participantCount}/
+                              {classSession.maxParticipants}
+                            </span>
                           </div>
                           <div className="flex items-center space-x-2">
                             <FaEye size={12} className="flex-shrink-0" />
-                            <span className="truncate">{getTimeUntilClass(classSession.scheduledStartTime)}</span>
+                            <span className="truncate">
+                              {getTimeUntilClass(
+                                classSession.scheduledStartTime
+                              )}
+                            </span>
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 lg:ml-4 w-full lg:w-auto">
-                        {currentUser.role === 'teacher' && classSession.teacherId === currentUser.id && (
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => openEditModal(classSession)}
-                              disabled={classSession.isActive}
-                              className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
-                              title="Sınıfı Düzenle"
-                            >
-                              <FaEdit size={14} />
-                            </button>
-                            <button
-                              onClick={() => openDeleteModal(classSession)}
-                              disabled={classSession.isActive}
-                              className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
-                              title="Sınıfı Sil"
-                            >
-                              <FaTrash size={14} />
-                            </button>
-                          </div>
-                        )}
-                        
+                        {currentUser.role === "teacher" &&
+                          classSession.teacherId === currentUser.id && (
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => openEditModal(classSession)}
+                                disabled={classSession.isActive}
+                                className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                                title="Sınıfı Düzenle"
+                              >
+                                <FaEdit size={14} />
+                              </button>
+                              <button
+                                onClick={() => openDeleteModal(classSession)}
+                                disabled={classSession.isActive}
+                                className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                                title="Sınıfı Sil"
+                              >
+                                <FaTrash size={14} />
+                              </button>
+                            </div>
+                          )}
+
                         {canJoinClass(classSession.scheduledStartTime) && (
                           <button
-                            onClick={() => 
-                              currentUser.role === 'teacher' && classSession.teacherId === currentUser.id
+                            onClick={() =>
+                              currentUser.role === "teacher" &&
+                              classSession.teacherId === currentUser.id
                                 ? handleStartClass(classSession)
                                 : onJoinClass(classSession)
                             }
                             className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base w-full sm:w-auto ${
-                              currentUser.role === 'teacher' && classSession.teacherId === currentUser.id
-                                ? 'bg-green-600 text-white hover:bg-green-700'
-                                : 'bg-blue-600 text-white hover:bg-blue-700'
+                              currentUser.role === "teacher" &&
+                              classSession.teacherId === currentUser.id
+                                ? "bg-green-600 text-white hover:bg-green-700"
+                                : "bg-blue-600 text-white hover:bg-blue-700"
                             }`}
                           >
-                            {currentUser.role === 'teacher' && classSession.teacherId === currentUser.id
-                              ? (classSession.isActive ? 'Sınıfa Git' : 'Dersi Başlat')
-                              : 'Katıl'
-                            }
+                            {currentUser.role === "teacher" &&
+                            classSession.teacherId === currentUser.id
+                              ? classSession.isActive
+                                ? "Sınıfa Git"
+                                : "Dersi Başlat"
+                              : "Katıl"}
                           </button>
                         )}
                       </div>
@@ -474,10 +483,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
             className="bg-white rounded-lg max-w-2xl w-full max-h-[95vh] overflow-y-auto"
           >
             <div className="p-4 sm:p-6 border-b border-gray-200">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Yeni Sınıf Oluştur</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+                Yeni Sınıf Oluştur
+              </h2>
             </div>
-            
-            <form onSubmit={handleCreateClass} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+
+            <form
+              onSubmit={handleCreateClass}
+              className="p-4 sm:p-6 space-y-4 sm:space-y-6"
+            >
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Sınıf Adı *
@@ -486,7 +500,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   type="text"
                   required
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Örn: Matematik 101 - Diferansiyel Denklemler"
                 />
@@ -498,7 +514,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </label>
                 <textarea
                   value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   rows={3}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Ders hakkında kısa açıklama..."
@@ -513,7 +531,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   <input
                     type="text"
                     value={formData.subject}
-                    onChange={(e) => setFormData({...formData, subject: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, subject: e.target.value })
+                    }
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Örn: Matematik, Fizik, Kimya"
                   />
@@ -527,7 +547,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     type="datetime-local"
                     required
                     value={formData.scheduledStartTime}
-                    onChange={(e) => setFormData({...formData, scheduledStartTime: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        scheduledStartTime: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -543,7 +568,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     min="15"
                     max="480"
                     value={formData.duration}
-                    onChange={(e) => setFormData({...formData, duration: parseInt(e.target.value)})}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        duration: parseInt(e.target.value),
+                      })
+                    }
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -557,118 +587,166 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     min="1"
                     max="100"
                     value={formData.maxParticipants}
-                    onChange={(e) => setFormData({...formData, maxParticipants: parseInt(e.target.value)})}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        maxParticipants: parseInt(e.target.value),
+                      })
+                    }
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
               </div>
 
               {/* Sınıf Ayarları */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Sınıf Ayarları</h3>
-                  
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                    <div className="space-y-4">
-                      <h4 className="font-medium text-gray-700">Katılımcı İzinleri</h4>                    <label className="flex items-center space-x-3">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Sınıf Ayarları
+                </h3>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="space-y-4">
+                    <h4 className="font-medium text-gray-700">
+                      Katılımcı İzinleri
+                    </h4>{" "}
+                    <label className="flex items-center space-x-3">
                       <input
                         type="checkbox"
                         checked={formData.settings.allowHandRaise}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          settings: { ...formData.settings, allowHandRaise: e.target.checked }
-                        })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            settings: {
+                              ...formData.settings,
+                              allowHandRaise: e.target.checked,
+                            },
+                          })
+                        }
                         className="rounded"
                       />
                       <span className="text-sm">Parmak kaldırma izni</span>
                     </label>
-                    
                     <label className="flex items-center space-x-3">
                       <input
                         type="checkbox"
                         checked={formData.settings.allowStudentChat}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          settings: { ...formData.settings, allowStudentChat: e.target.checked }
-                        })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            settings: {
+                              ...formData.settings,
+                              allowStudentChat: e.target.checked,
+                            },
+                          })
+                        }
                         className="rounded"
                       />
                       <span className="text-sm">Öğrenci sohbet izni</span>
                     </label>
-                    
                     <label className="flex items-center space-x-3">
                       <input
                         type="checkbox"
                         checked={formData.settings.allowPrivateMessages}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          settings: { ...formData.settings, allowPrivateMessages: e.target.checked }
-                        })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            settings: {
+                              ...formData.settings,
+                              allowPrivateMessages: e.target.checked,
+                            },
+                          })
+                        }
                         className="rounded"
                       />
                       <span className="text-sm">Özel mesaj izni</span>
                     </label>
-                    
                     <label className="flex items-center space-x-3">
                       <input
                         type="checkbox"
                         checked={formData.settings.allowStudentScreenShare}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          settings: { ...formData.settings, allowStudentScreenShare: e.target.checked }
-                        })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            settings: {
+                              ...formData.settings,
+                              allowStudentScreenShare: e.target.checked,
+                            },
+                          })
+                        }
                         className="rounded"
                       />
                       <span className="text-sm">Öğrenci ekran paylaşımı</span>
                     </label>
                   </div>
-                  
+
                   <div className="space-y-4">
-                    <h4 className="font-medium text-gray-700">Varsayılan Ayarlar</h4>
-                    
+                    <h4 className="font-medium text-gray-700">
+                      Varsayılan Ayarlar
+                    </h4>
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Varsayılan mikrofon durumu
                       </label>
                       <select
                         value={formData.settings.defaultMicrophoneState}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          settings: { ...formData.settings, defaultMicrophoneState: e.target.value as 'muted' | 'unmuted' }
-                        })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            settings: {
+                              ...formData.settings,
+                              defaultMicrophoneState: e.target.value as
+                                | "muted"
+                                | "unmuted",
+                            },
+                          })
+                        }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="muted">Kapalı</option>
                         <option value="unmuted">Açık</option>
                       </select>
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Varsayılan kamera durumu
                       </label>
                       <select
                         value={formData.settings.defaultCameraState}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          settings: { ...formData.settings, defaultCameraState: e.target.value as 'on' | 'off' }
-                        })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            settings: {
+                              ...formData.settings,
+                              defaultCameraState: e.target.value as
+                                | "on"
+                                | "off",
+                            },
+                          })
+                        }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="on">Açık</option>
                         <option value="off">Kapalı</option>
                       </select>
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Varsayılan layout
                       </label>
                       <select
                         value={formData.settings.defaultLayout}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          settings: { ...formData.settings, defaultLayout: e.target.value }
-                        })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            settings: {
+                              ...formData.settings,
+                              defaultLayout: e.target.value,
+                            },
+                          })
+                        }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="grid">Izgara Görünümü</option>
@@ -677,18 +755,25 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         <option value="sidebar">Yan Panel</option>
                       </select>
                     </div>
-                    
+
                     <label className="flex items-center space-x-3">
                       <input
                         type="checkbox"
                         checked={formData.settings.autoMuteNewParticipants}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          settings: { ...formData.settings, autoMuteNewParticipants: e.target.checked }
-                        })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            settings: {
+                              ...formData.settings,
+                              autoMuteNewParticipants: e.target.checked,
+                            },
+                          })
+                        }
                         className="rounded"
                       />
-                      <span className="text-sm">Yeni katılımcıları otomatik sustur</span>
+                      <span className="text-sm">
+                        Yeni katılımcıları otomatik sustur
+                      </span>
                     </label>
                   </div>
                 </div>
@@ -723,10 +808,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
             className="bg-white rounded-lg max-w-2xl w-full max-h-[95vh] overflow-y-auto"
           >
             <div className="p-4 sm:p-6 border-b border-gray-200">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Sınıfı Düzenle</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+                Sınıfı Düzenle
+              </h2>
             </div>
-            
-            <form onSubmit={handleEditClass} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+
+            <form
+              onSubmit={handleEditClass}
+              className="p-4 sm:p-6 space-y-4 sm:space-y-6"
+            >
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Sınıf Adı *
@@ -735,7 +825,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   type="text"
                   required
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Örn: Matematik 101 - Diferansiyel Denklemler"
                 />
@@ -747,7 +839,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </label>
                 <textarea
                   value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   rows={3}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Ders hakkında kısa açıklama..."
@@ -762,7 +856,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   <input
                     type="text"
                     value={formData.subject}
-                    onChange={(e) => setFormData({...formData, subject: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, subject: e.target.value })
+                    }
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Örn: Matematik, Fizik, Kimya"
                   />
@@ -776,7 +872,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     type="datetime-local"
                     required
                     value={formData.scheduledStartTime}
-                    onChange={(e) => setFormData({...formData, scheduledStartTime: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        scheduledStartTime: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -792,7 +893,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     min="15"
                     max="480"
                     value={formData.duration}
-                    onChange={(e) => setFormData({...formData, duration: parseInt(e.target.value)})}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        duration: parseInt(e.target.value),
+                      })
+                    }
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -806,7 +912,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     min="1"
                     max="100"
                     value={formData.maxParticipants}
-                    onChange={(e) => setFormData({...formData, maxParticipants: parseInt(e.target.value)})}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        maxParticipants: parseInt(e.target.value),
+                      })
+                    }
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -850,15 +961,20 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   <FaTrash className="text-red-600" size={24} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Sınıfı Sil</h3>
-                  <p className="text-sm text-gray-600">Bu işlem geri alınamaz</p>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Sınıfı Sil
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Bu işlem geri alınamaz
+                  </p>
                 </div>
               </div>
-              
+
               <p className="text-gray-700 mb-6">
-                <strong>"{deletingClass.name}"</strong> adlı sınıfı silmek istediğinizden emin misiniz?
+                <strong>"{deletingClass.name}"</strong> adlı sınıfı silmek
+                istediğinizden emin misiniz?
               </p>
-              
+
               <div className="flex items-center justify-end space-x-4">
                 <button
                   onClick={() => {
