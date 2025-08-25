@@ -10,8 +10,8 @@ import {
   FaTrash,
   FaEye,
 } from "react-icons/fa";
-import { ClassSession, User } from "../types/models";
-import { initialScheduledClasses } from "../types/data";
+import { ClassSession, User } from "../../types/models";
+import { initialScheduledClasses } from "../../types/data";
 
 interface DashboardProps {
   currentUser: User;

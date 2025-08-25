@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaMicrophoneSlash, FaExpand, FaUserTimes } from 'react-icons/fa';
+import { Participant, VideoLayout } from '../../types/models';
 import { VideoPlayer } from './VideoPlayer';
-import { Participant, VideoLayout } from '../types/models';
 
 interface ParticipantGridProps {
   participants: Participant[];

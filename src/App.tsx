@@ -1,4 +1,4 @@
-import { Dashboard } from "./components/Dashboard";
+import { Dashboard } from "./components/VirtualClass/Dashboard";
 
 function App() {
   return (

@@ -1,4 +1,4 @@
-import { useAppLogic } from "../hooks/useAppLogic";
+import { useAppLogic } from "../../hooks/useAppLogic";
 import { Classroom } from "./Classroom";
 import { ClassList } from "./ClassList";
 import { RoleSelector } from "./RoleSelector";
