@@ -8,7 +8,7 @@ import { WebRTCService } from '../services/webrtc';
 import { Participant, AttendanceRecord, ClassSession, ChatMessage, VideoLayout, HandRaise, ClassDocument, ClassSettings } from '../types/models';
 import { ScreenSharePanel } from './VirtualClass/Panels/ScreenSharePanel';
 
-interface ClassroomInterfaceProps {
+interface ClassroomProps {
   classSession: ClassSession;
   currentUser: { id: string; name: string; role: 'teacher' | 'student' | 'observer' };
   onLeaveClass: () => void;
@@ -16,7 +16,7 @@ interface ClassroomInterfaceProps {
 
 type SidePanelType = 'chat' | 'participants' | 'documents' | 'handraises' | 'layout' | 'settings' | null;
 
-export const ClassroomInterface: React.FC<ClassroomInterfaceProps> = ({
+export const Classroom: React.FC<ClassroomProps> = ({
   classSession,
   currentUser,
   onLeaveClass,

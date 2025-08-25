@@ -1,9 +1,9 @@
-import { AppContainer } from "./components/AppContainer";
+import { Dashboard } from "./components/Dashboard";
 
 function App() {
   return (
     <div>
-      <AppContainer />
+      <Dashboard />
     </div>
   );
 }
