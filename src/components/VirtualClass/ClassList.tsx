@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   FaPlus,
@@ -28,6 +29,7 @@ export const ClassList: React.FC<DashboardProps> = ({
   onEditClass,
   onDeleteClass,
 }) => {
+  const navigate = useNavigate();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingClass, setEditingClass] = useState<ClassSession | null>(null);
@@ -126,6 +128,10 @@ export const ClassList: React.FC<DashboardProps> = ({
         waitingRoomEnabled: false,
       },
     });
+    // Yeni oluşturulan sınıfa yönlendir
+    if (newClass.id) {
+      navigate(`/admin/virtualclass/classroom/${newClass.id}`);
+    }
   };
 
   const handleEditClass = (e: React.FormEvent) => {
@@ -223,6 +229,10 @@ export const ClassList: React.FC<DashboardProps> = ({
       prev.map((c) => (c.id === classSession.id ? updatedClass : c))
     );
     onJoinClass(updatedClass);
+    // Sınıf başlatıldığında classroom ekranına yönlendir
+    if (updatedClass.id) {
+      navigate(`/admin/virtualclass/classroom/${updatedClass.id}`);
+    }
   };
 
   const formatDateTime = (dateString: string) => {
@@ -447,7 +457,7 @@ export const ClassList: React.FC<DashboardProps> = ({
                               currentUser.role === "teacher" &&
                               classSession.teacherId === currentUser.id
                                 ? handleStartClass(classSession)
-                                : onJoinClass(classSession)
+                                : (() => { onJoinClass(classSession); if (classSession.id) navigate(`/admin/virtualclass/classroom/${classSession.id}`); })()
                             }
                             className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base w-full sm:w-auto ${
                               currentUser.role === "teacher" &&

@@ -1,6 +1,7 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppLogic } from "../../hooks/useAppLogic";
 import { Classroom } from "./Classroom";
-import { ClassList } from "./ClassList";
 import { RoleSelector } from "./RoleSelector";
 
 export function Dashboard() {
@@ -15,22 +16,21 @@ export function Dashboard() {
     handleEditClass,
     handleDeleteClass,
   } = useAppLogic();
+  const navigate = useNavigate();
 
-  let content = null;
+  useEffect(() => {
+    if (appState === "dashboard" && currentUser) {
+      navigate("/admin/virtualclass/classes", { replace: true });
+    }
+  }, [appState, currentUser, navigate]);
+
   if (appState === "role-selection") {
-    content = <RoleSelector onRoleSelect={handleRoleSelect} />;
+    return <RoleSelector onRoleSelect={handleRoleSelect} />;
   } else if (appState === "dashboard" && currentUser) {
-    content = (
-      <ClassList
-        currentUser={currentUser}
-        onCreateClass={handleCreateClass}
-        onJoinClass={handleJoinClass}
-        onEditClass={handleEditClass}
-        onDeleteClass={handleDeleteClass}
-      />
-    );
+    // Yönlendirme yapılacağı için burada içerik render etmiyoruz
+    return null;
   } else if (appState === "classroom" && currentUser && currentClass) {
-    content = (
+    return (
       <Classroom
         classSession={currentClass}
         currentUser={currentUser}
@@ -38,6 +38,5 @@ export function Dashboard() {
       />
     );
   }
-
-  return content;
+  return null;
 }
